@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>vue-design-editor</title>
+    <script>
+      !(function (p) {
+        "use strict";
+        !(function (t) {
+          var s = window,
+            e = document,
+            i = p,
+            c = "".concat(
+              "https:" === e.location.protocol ? "https://" : "http://",
+              "sdk.51.la/js-sdk-pro.min.js"
+            ),
+            n = e.createElement("script"),
+            r = e.getElementsByTagName("script")[0];
+          (n.type = "text/javascript"),
+            n.setAttribute("charset", "UTF-8"),
+            (n.async = !0),
+            (n.src = c),
+            (n.id = "LA_COLLECT"),
+            (i.d = n);
+          var o = function () {
+            s.LA.ids.push(i);
+          };
+          s.LA ? s.LA.ids && o() : ((s.LA = p), (s.LA.ids = []), o()),
+            r.parentNode.insertBefore(n, r);
+        })();
+      })({ id: "3GUVKKsqX1ttIKXk", ck: "3GUVKKsqX1ttIKXk" });
+    </script>
+    <style>
+      .first-screen-loading {
+        width: 200px;
+        height: 200px;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        margin-top: -100px;
+        margin-left: -100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .first-screen-loading-spinner {
+        width: 36px;
+        height: 36px;
+        border: 3px solid #4d7cff;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spinner 0.8s linear infinite;
+      }
+      .first-screen-loading-text {
+        margin-top: 20px;
+        color: #4d7cff;
+      }
+      @keyframes spinner {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="first-screen-loading">
+        <div class="first-screen-loading-spinner"></div>
+        <div class="first-screen-loading-text">正在加载中，请稍等 ...</div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

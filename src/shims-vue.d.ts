@@ -1,0 +1,18 @@
+/* eslint-disable */
+declare module "*.vue" {
+  import type { DefineComponent } from "vue";
+  const component: DefineComponent<{}, {}, any>;
+  export default component;
+}
+
+declare module "element-plus";
+
+declare module "uuid";
+
+declare module "*.svg";
+
+interface Window {
+  showOpenFilePicker: (params: any) => any;
+}
+
+declare module "tojson.js";
