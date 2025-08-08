@@ -92,18 +92,105 @@ class Handler implements HandlerOptions {
     const { init } = this;
     this.initOption(options);
 
+    // 设置全局高清渲染配置
+    this.setupHighQualityRendering();
+
     // 设置删除处理器
     // this.control.setDeleteHandler((target: any) => {
     //   this.remove(target);
     // });
 
-    // 初始化默认背景图
-    // await this.workareaHandler._initDefaultBackground();
+    // 设置画布尺寸为1000x2000
     this.workareaHandler.setSize(
-      1242,
-      2690
+      1000,
+      2000
     );
     init && init();
+  }
+
+  // 设置高质量渲染配置
+  setupHighQualityRendering() {
+    // 获取设备像素比
+    const devicePixelRatio = window.devicePixelRatio || 1;
+    
+    // 设置Fabric.js全局渲染优化
+    const fabric = require('fabric').fabric;
+    
+    // 全局图片渲染优化
+    fabric.Image.prototype.crossOrigin = 'anonymous';
+    fabric.Image.prototype.objectCaching = false;
+    fabric.Image.prototype.statefullCache = true;
+    fabric.Image.prototype.noScaleCache = true;
+    fabric.Image.prototype.strokeUniform = true;
+    fabric.Image.prototype.dirty = true;
+    fabric.Image.prototype.perPixelTargetFind = true;
+    
+    // 文本渲染优化
+    fabric.Text.prototype.objectCaching = false;
+    fabric.Text.prototype.statefullCache = true;
+    fabric.Text.prototype.strokeUniform = true;
+    fabric.Text.prototype.dirty = true;
+    fabric.Text.prototype.fontFamily = 'Arial, "Microsoft YaHei", sans-serif';
+    fabric.Text.prototype.fontSize = 16;
+    fabric.Text.prototype.fontWeight = 'normal';
+    fabric.Text.prototype.charSpacing = 0;
+    fabric.Text.prototype.lineHeight = 1.2;
+    
+    // 路径和形状渲染优化
+    fabric.Path.prototype.objectCaching = false;
+    fabric.Path.prototype.strokeUniform = true;
+    fabric.Path.prototype.dirty = true;
+    fabric.Path.prototype.strokeLineCap = 'round';
+    fabric.Path.prototype.strokeLineJoin = 'round';
+    
+    // 通用对象渲染优化
+    fabric.Object.prototype.objectCaching = false;
+    fabric.Object.prototype.statefullCache = true;
+    fabric.Object.prototype.noScaleCache = true;
+    fabric.Object.prototype.strokeUniform = true;
+    fabric.Object.prototype.dirty = true;
+    
+    // 画布渲染优化
+    if (this.canvas) {
+      this.canvas.enableRetinaScaling = true;
+      this.canvas.imageSmoothingEnabled = true;
+      this.canvas.renderOnAddRemove = true;
+      this.canvas.skipTargetFind = false;
+      this.canvas.perPixelTargetFind = true;
+      
+      // 设置画布上下文的高质量渲染
+      const ctx = this.canvas.getContext();
+      if (ctx) {
+        // 如果是高DPI设备，确保上下文缩放正确
+        if (devicePixelRatio > 1) {
+          ctx.scale(devicePixelRatio, devicePixelRatio);
+        }
+        
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.textRenderingOptimization = 'optimizeQuality';
+        
+        // 设置字体渲染优化
+        if ('textRendering' in ctx) {
+          (ctx as any).textRendering = 'optimizeLegibility';
+        }
+      }
+      
+      // 设置上层canvas的高质量渲染
+      const upperCtx = this.canvas.upperCanvasEl?.getContext('2d');
+      if (upperCtx) {
+        if (devicePixelRatio > 1) {
+          upperCtx.scale(devicePixelRatio, devicePixelRatio);
+        }
+        upperCtx.imageSmoothingEnabled = true;
+        upperCtx.imageSmoothingQuality = 'high';
+      }
+      
+      // 强制重新渲染以应用设置
+      this.canvas.requestRenderAll();
+    }
+    
+    console.log('全局高清渲染配置已应用');
   }
 
   initOption = (options: HandlerOptions) => {

@@ -160,8 +160,35 @@ class EditorWorkspace {
     const { workspaceEl } = this;
     const width = workspaceEl.offsetWidth;
     const height = workspaceEl.offsetHeight;
+    
+    // 获取设备像素比
+    const devicePixelRatio = window.devicePixelRatio || 1;
+    
+    // 设置画布尺寸
     this.canvas.setWidth(width);
     this.canvas.setHeight(height);
+    
+    // 如果是高DPI设备，重新设置canvas的实际像素尺寸
+    if (devicePixelRatio > 1) {
+      const canvasElement = this.canvas.getElement();
+      const ctx = canvasElement.getContext('2d');
+      
+      // 设置canvas实际像素尺寸
+      canvasElement.width = width * devicePixelRatio;
+      canvasElement.height = height * devicePixelRatio;
+      
+      // 设置canvas显示尺寸
+      canvasElement.style.width = width + 'px';
+      canvasElement.style.height = height + 'px';
+      
+      // 重新设置上下文的高质量渲染
+      if (ctx) {
+        ctx.scale(devicePixelRatio, devicePixelRatio);
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+      }
+    }
+    
     const center = this.canvas.getCenter();
     this.canvas.setViewportTransform(fabric.iMatrix.concat());
     this.canvas.zoomToPoint(new fabric.Point(center.left, center.top), scale);

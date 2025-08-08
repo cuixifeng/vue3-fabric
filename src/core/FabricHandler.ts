@@ -122,8 +122,13 @@ class FabricHandler {
   async addImage(obj: FabricImage) {
     const { src, disableAutoScale, imageSmoothing, ...otherOption } = obj;
     const { objectOption } = this.handler;
+    
+    // 创建高质量图片元素
     const imageUrl = new Image();
-    imageUrl.crossOrigin = "Anonymous"; //这里是主要添加的属性
+    imageUrl.crossOrigin = "Anonymous";
+    
+    // 获取设备像素比
+    const devicePixelRatio = window.devicePixelRatio || 1;
     
     // 只有在单个图片素材导入情况下才自适应，除非明确禁用自动缩放
     const { width } = this.handler.workareaHandler.workspace as any;
@@ -145,17 +150,48 @@ class FabricHandler {
       clipPath: null,
       ...JSON.parse(JSON.stringify(objectOption)),
       ...otherOption,
+      // 高清渲染配置
+      crossOrigin: 'anonymous',
+      // 禁用对象缓存以确保高质量渲染
+      objectCaching: false,
+      // 启用状态缓存但禁用缩放缓存
+      statefullCache: true,
+      noScaleCache: true,
+      // 确保描边统一
+      strokeUniform: true,
+      // 高质量图片渲染
+      imageSmoothing: imageSmoothing !== false, // 默认启用图片平滑
     };
     
-    // 如果禁用图片平滑处理，添加相关属性
-    if (imageSmoothing === false) {
-      imageOptions.imageSmoothing = false;
+    // 创建Fabric图片对象
+    const canvasImage = new fabric.Image(imageUrl, imageOptions);
+    canvasImage.crossOrigin = "Anonymous";
+    
+    // 设置高质量渲染属性
+    canvasImage.set({
+      // 确保图片以最高质量渲染
+      dirty: true,
+      // 禁用自动缓存以保证质量
+      objectCaching: false,
+      // 启用像素级精确渲染
+      perPixelTargetFind: true,
+    });
+    
+    // 等待图片加载并设置
+    await this.handler.setImage(canvasImage, src);
+    
+    // 图片加载完成后，重新设置高质量渲染属性
+    canvasImage.set({
+      dirty: true,
+      objectCaching: false,
+    });
+    
+    // 如果是高DPI设备，确保图片以原始分辨率渲染
+    if (devicePixelRatio > 1) {
+      // 强制重新渲染以应用高DPI设置
+      this.handler.canvas.requestRenderAll();
     }
     
-    const canvasImage = new fabric.Image(imageUrl, imageOptions);
-    canvasImage.crossOrigin = "Anonymous"; //这里是主要添加的属性
-    
-    await this.handler.setImage(canvasImage, src);
     return canvasImage;
   }
 

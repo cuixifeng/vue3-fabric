@@ -2,6 +2,7 @@
   <div class="option-box">
     <button @click="undo">撤销</button>
     <button @click="redo">重做</button>
+    <button @click="addTestElements">测试渲染清晰度</button>
   </div>
   <div
     :style="{ width: '100%', height: '100%' }"
@@ -63,59 +64,129 @@ export default {
     const handler = ref();
 
     onMounted(() => {
-      const { offsetWidth, offsetHeight } =
-        parentCanvas.value.parentElement.parentElement;
-      // 要减去滚动条的高度
-      const canvasOptions = Object.assign({
-        height: offsetHeight - scrollWidth,
-        width: offsetWidth - scrollWidth,
-        fireRightClick: true, // 启用右键，button的数字为3
-        stopContextMenu: true, // 禁止默认右键菜单
-        enableRetinaScaling: true, // 启用高分辨率显示支持
-        controlsAboveOverlay: true,
+      // 获取容器尺寸
+      const { offsetWidth, offsetHeight } = parentCanvas.value.parentElement.parentElement;
+      
+      // 获取设备像素比，用于高清渲染
+      const devicePixelRatio = window.devicePixelRatio || 1;
+      const parentWidth = offsetWidth - scrollWidth;
+      const parentHeight = offsetHeight - scrollWidth;
+      
+      // 获取canvas元素并预先设置高DPI属性
+      const canvasElement = document.getElementById(`canvas_${id.value}`);
+      
+      // 设置canvas元素的高DPI属性
+      canvasElement.style.width = parentWidth + 'px';
+      canvasElement.style.height = parentHeight + 'px';
+      canvasElement.width = parentWidth * devicePixelRatio;
+      canvasElement.height = parentHeight * devicePixelRatio;
+      
+      // 初始化高清画布配置
+      const canvasOptions = {
+        width: parentWidth,
+        height: parentHeight,
+        backgroundColor: '#f5f5f5', // 浅灰色背景，便于区分工作区
+        selection: true, // 允许选择
         preserveObjectStacking: true,
-        selection: false, // 允许选择
-        // 添加高质量图片渲染设置
-        imageSmoothingEnabled: false, // 禁用图片平滑处理以保持清晰度
-        renderOnAddRemove: true, // 添加/删除对象时自动渲染
-        skipTargetFind: false, // 不跳过目标查找，确保精确渲染
-      });
+        // 高清渲染配置
+        enableRetinaScaling: true, // 启用Retina缩放
+        devicePixelRatio: devicePixelRatio, // 设备像素比
+        imageSmoothingEnabled: true, // 启用图像平滑
+        renderOnAddRemove: false, // 优化性能
+        skipTargetFind: false, // 不跳过目标查找，保证交互准确性
+        // 高质量渲染设置
+        allowTouchScrolling: false,
+        centeredScaling: false,
+        centeredRotation: true,
+      };
 
+      // 全局优化Fabric对象渲染 - 在创建画布前设置
       fabric.Object.prototype.transparentCorners = false;
       fabric.Object.prototype.cornerColor = "blue";
       fabric.Object.prototype.cornerStyle = "circle";
-      canvas = new fabric.Canvas(`canvas_${id.value}`, canvasOptions);
+      fabric.Object.prototype.cornerSize = 8; // 控制点大小
+      fabric.Object.prototype.borderScaleFactor = 1; // 边框缩放因子
+      fabric.Object.prototype.borderOpacityWhenMoving = 0.4; // 移动时边框透明度
+      fabric.Object.prototype.objectCaching = false;
+      fabric.Object.prototype.statefullCache = true;
+      fabric.Object.prototype.noScaleCache = true;
+      fabric.Object.prototype.strokeUniform = true;
+      fabric.Object.prototype.dirty = true;
       
-      // 设置高质量图片渲染
+      // 优化图片对象渲染
+      fabric.Image.prototype.crossOrigin = 'anonymous';
+      fabric.Image.prototype.objectCaching = false;
+      fabric.Image.prototype.perPixelTargetFind = true;
+      
+      // 文本渲染优化
+      fabric.Text.prototype.fontFamily = 'Arial, sans-serif';
+      fabric.Text.prototype.fontSize = 16;
+      fabric.Text.prototype.fontWeight = 'normal';
+      fabric.Text.prototype.charSpacing = 0;
+      fabric.Text.prototype.objectCaching = false;
+      
+      // 创建画布
+      canvas = new fabric.Canvas(canvasElement, canvasOptions);
+      
+      // 设置高质量渲染上下文
       const ctx = canvas.getContext('2d');
       if (ctx) {
-        ctx.imageSmoothingEnabled = false; // 禁用图片平滑处理
-        ctx.imageSmoothingQuality = 'high'; // 设置高质量渲染
-        // 设置不同浏览器的兼容性属性
-        ctx.webkitImageSmoothingEnabled = false;
-        ctx.mozImageSmoothingEnabled = false;
-        ctx.msImageSmoothingEnabled = false;
+        // 缩放上下文以匹配设备像素比
+        ctx.scale(devicePixelRatio, devicePixelRatio);
+        
+        // 设置高质量渲染属性
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high'; // 高质量图像平滑
+        ctx.textRenderingOptimization = 'optimizeQuality'; // 文本渲染优化
+        ctx.antialias = 'subpixel'; // 子像素抗锯齿
+        
+        // 设置字体渲染优化
+        if ('textRendering' in ctx) {
+          ctx.textRendering = 'optimizeLegibility';
+        }
       }
       
-      canvas.renderAll();
+      // 设置上层canvas的高质量渲染
+      const upperCtx = canvas.upperCanvasEl.getContext('2d');
+      if (upperCtx) {
+        upperCtx.scale(devicePixelRatio, devicePixelRatio);
+        upperCtx.imageSmoothingEnabled = true;
+        upperCtx.imageSmoothingQuality = 'high';
+      }
+      
+      // 初始化Handler
       handler.value = new Handler({
         id: id.value,
         canvas,
         container: parentCanvas.value,
         ...props,
       });
+      
+      // 设置选择样式 - 高清优化
       canvas.selectionColor = "rgba(196,235,255,0.3)";
       canvas.selectionBorderColor = "#6ccfff";
       canvas.selectionLineWidth = 1;
-      fabric.Image.fromURL(
-        "https://saas-1302732800.cos.accelerate.myqcloud.com/uploads/images/20250626/2025062615354765e611996.png",
-        (img) => {
-          img.scaleToWidth(900); // 调整大小以适应画布
-          img.scaleToHeight(2690);
-          canvas.setOverlayImage(img, canvas.renderAll.bind(canvas));
-        },
-        { crossOrigin: 'anonymous' }
-      );
+      canvas.selectionDashArray = []; // 实线选择框
+      
+      // 优化渲染性能
+      canvas.renderOnAddRemove = true;
+      canvas.skipTargetFind = false;
+      canvas.perPixelTargetFind = true; // 像素级目标查找，提高精确度
+      
+      // 确保画布居中显示
+      setTimeout(() => {
+        if (handler.value && handler.value.workareaHandler) {
+          handler.value.workareaHandler.auto(); // 自动缩放并居中
+          console.log('画布已居中显示，工作区尺寸：1000x2000');
+          console.log('高清渲染已启用，设备像素比：', devicePixelRatio);
+        }
+      }, 100);
+      
+      // 渲染画布
+      canvas.renderAll();
+      
+      console.log('高清画布初始化完成，容器尺寸：', offsetWidth - scrollWidth, 'x', offsetHeight - scrollWidth);
+      console.log('渲染清晰度优化已应用');
     });
 
     // 添加 undo 和 redo 方法
