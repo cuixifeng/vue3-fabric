@@ -95,6 +95,9 @@ class Handler implements HandlerOptions {
     // 设置全局高清渲染配置
     this.setupHighQualityRendering();
 
+    // 设置scaling事件处理
+    this.setupScalingEvents();
+
     // 设置删除处理器
     // this.control.setDeleteHandler((target: any) => {
     //   this.remove(target);
@@ -191,6 +194,76 @@ class Handler implements HandlerOptions {
     }
     
     console.log('全局高清渲染配置已应用');
+  }
+
+  // 设置scaling事件处理
+  setupScalingEvents() {
+    if (!this.canvas) return;
+
+    // 对象开始缩放事件
+    this.canvas.on('object:scaling', (e: any) => {
+      const target = e.target;
+      if (target && target.id !== 'workarea') {
+        // 缩放过程中的处理逻辑
+        this.onObjectScaling(target);
+      }
+    });
+
+    // 对象缩放完成事件
+    this.canvas.on('object:scaled', (e: any) => {
+      const target = e.target;
+      if (target && target.id !== 'workarea') {
+        // 缩放完成后的处理逻辑
+        this.onObjectScaled(target);
+      }
+    });
+
+    console.log('Scaling事件监听器已设置');
+  }
+
+  // 对象正在缩放时的处理
+  onObjectScaling(target: any) {
+    // 可以在这里添加缩放过程中的限制逻辑
+    // 例如：最小/最大缩放比例限制
+    const minScale = 0.1;
+    const maxScale = 10;
+
+    if (target.scaleX < minScale) {
+      target.scaleX = minScale;
+    }
+    if (target.scaleY < minScale) {
+      target.scaleY = minScale;
+    }
+    if (target.scaleX > maxScale) {
+      target.scaleX = maxScale;
+    }
+    if (target.scaleY > maxScale) {
+      target.scaleY = maxScale;
+    }
+
+    // 实时更新对象坐标
+    target.setCoords();
+  }
+
+  // 对象缩放完成时的处理
+  onObjectScaled(target: any) {
+    // 缩放完成后的处理逻辑
+    console.log(`对象 ${target.type} (ID: ${target.id}) 缩放完成`);
+    console.log(`最终尺寸: ${target.width * target.scaleX} x ${target.height * target.scaleY}`);
+
+    // 更新对象坐标
+    target.setCoords();
+
+    // 触发选择事件，更新属性面板
+    if (this.onSelect) {
+      this.onSelect(target);
+    }
+
+    // 重新渲染画布
+    this.canvas.renderAll();
+
+    // 可以在这里添加历史记录保存等逻辑
+    // this.saveHistory();
   }
 
   initOption = (options: HandlerOptions) => {

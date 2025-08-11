@@ -10,6 +10,7 @@ export default createStore({
     icons: [],
     selectedItem: null, // 选中的画布元素
     workspace: null, // 画布对象
+    currentItem: null, //当前点击选择的元素
   },
   getters: {},
   mutations: {
@@ -29,6 +30,9 @@ export default createStore({
     setActivateItem(state, value) {
       state.selectedItem = null;
       state.selectedItem = value;
+    },
+    setCurrentItem(state, value) {
+      state.currentItem = value;
     },
     setWorkarea(state, value) {
       state.workspace = value;

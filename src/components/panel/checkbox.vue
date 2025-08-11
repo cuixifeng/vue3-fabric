@@ -27,8 +27,8 @@
   </el-tooltip>
 </template>
 <script setup>
-import { defineProps, computed, useAttrs } from "vue";
-const { emit } = useAttrs();
+import { defineProps, computed, defineEmits } from "vue";
+const emit = defineEmits(['change']);
 const props = defineProps({
   className: {
     type: String,
@@ -69,6 +69,8 @@ const newValue = computed({
     return props.initValue[props.typeKey];
   },
   set(value) {
+    console.log(value);
+
     emit("change", value);
   },
 });

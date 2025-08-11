@@ -126,6 +126,7 @@ function onSelect(target) {
     // if (this.selectedItem && target.id === this.selectedItem.id) {
     //     return;
     // }
+
     commit("setActivateItem", target);
     return;
   }

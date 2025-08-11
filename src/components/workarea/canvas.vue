@@ -2,7 +2,6 @@
   <div class="option-box">
     <button @click="undo">撤销</button>
     <button @click="redo">重做</button>
-    <button @click="addTestElements">测试渲染清晰度</button>
   </div>
   <div
     :style="{ width: '100%', height: '100%' }"
@@ -18,6 +17,7 @@ import { fabric } from "fabric";
 import { ref, onMounted } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import Handler from "@/core/handler";
+import { useStore } from "vuex";
 // import "@/core/FabricObjects";
 const scrollWidth = 12;
 export default {
@@ -62,6 +62,7 @@ export default {
     let canvas;
     const parentCanvas = ref();
     const handler = ref();
+    const store = useStore();
 
     onMounted(() => {
       // 获取容器尺寸
@@ -193,6 +194,10 @@ export default {
         var newZoom = zoom * zoomScale;
         handler.value.workareaHandler.setZoomAuto(newZoom);
       });
+
+    
+
+     
       // 拖拽状态变量
       let isDragging = false;
       let lastPosX = 0;
@@ -246,7 +251,15 @@ export default {
       // 鼠标按下事件：只在工作区外部点击时启用拖拽
       canvas.on("mouse:down", (opt) => {
         const evt = opt.e;
+        // 检查是否点击了某个对象
+        if (opt.target) {
+          const clickedObject = opt.target;
+          console.log("点击的对象:", clickedObject);
+          store.commit("setCurrentItem", clickedObject);
 
+        } else {
+          console.log("点击的是空白区域");
+        }
         // 检查是否在工作区内
         const isInWorkspace = isMouseInWorkspace(evt);
         console.log("点击位置是否在工作区内:", isInWorkspace);
@@ -349,8 +362,17 @@ export default {
     ),
     linear-gradient(45deg, #eee 25%, #fff 0, #fff 75%, #eee 0, #eee);
   box-shadow: 0 5px 30px 0 rgb(0 0 0 / 10%); */
-  background-position: 0 0, 10px 10px;
+  background-color: #f0f0f0;
+  background-image: linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.1) 25%,
+      transparent 25%
+    ),
+    linear-gradient(-45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(0, 0, 0, 0.1) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(0, 0, 0, 0.1) 75%);
   background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
 }
 .option-box {
   position: fixed;
