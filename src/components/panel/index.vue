@@ -34,7 +34,7 @@
                   {{ parseInt(workspace.height) }} px
                 </div>
               </div>
-              <div class="gda-space-item">
+              <!-- <div class="gda-space-item">
                 <div class="panel-row">
                   <div class="panel-row__content">
                     <button
@@ -45,7 +45,7 @@
                     </button>
                   </div>
                 </div>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
