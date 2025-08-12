@@ -141,6 +141,11 @@ function initCanvas() {
     
     // 克隆当前选中的图层，避免影响原始对象
     store.state.currentItem.clone((clonedItem: any) => {
+      console.log(clonedItem,'clonedItem')
+      clonedItem.set({
+        angle: 0
+      })
+
       img.value = clonedItem;
       
       // 计算等比例缩放，使图片适应画布
