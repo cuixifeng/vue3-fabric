@@ -270,29 +270,101 @@ function cropImage() {
     cropHeight
   );
 
-  // 创建新的图片对象，保持等比例
-  const croppedImg = new fabric.Image(tempCanvas, {
-    left: store.state.currentItem ? store.state.currentItem.left : 100,
-    top: store.state.currentItem ? store.state.currentItem.top : 100,
-    scaleX: 1,
-    scaleY: 1,
-    type:'Image'
-  });
+  // 获取裁剪后的图片URL
+  const croppedImageUrl = tempCanvas.toDataURL('image/png');
+  
+  console.log('裁剪后的图片URL:', croppedImageUrl);
 
-  // 从主画布移除原始图片
+  // 更新当前选中的图层
   if (store.state.currentItem && canvas.value) {
-    canvas.value.remove(store.state.currentItem);
+    // 使用裁剪后的图片URL更新当前图层
+    store.state.currentItem.setSrc(croppedImageUrl, function() {
+      // 更新图层尺寸为裁剪后的尺寸
+      store.state.currentItem.set({
+        width: cropWidth,
+        height: cropHeight,
+        scaleX: 1,
+        scaleY: 1
+      });
+
+      // 重新渲染主画布
+      canvas.value.renderAll();
+      
+      console.log('图片裁剪完成，已更新到主画布');
+    });
+  } else {
+    // 如果没有当前选中的图层，创建新的图片对象
+    const croppedImg = new fabric.Image(tempCanvas, {
+      left: 100,
+      top: 100,
+      scaleX: 1,
+      scaleY: 1,
+    });
+
+    if (canvas.value) {
+      canvas.value.add(croppedImg);
+      canvas.value.setActiveObject(croppedImg);
+      canvas.value.renderAll();
+    }
+    
+    console.log('创建新的裁剪图片对象');
   }
 
-  // 添加裁剪后的图片到主画布
-  if (canvas.value) {
-    canvas.value.add(croppedImg);
-    canvas.value.setActiveObject(croppedImg);
-    canvas.value.renderAll();
-  }
-
-  console.log('图片裁剪完成，等比例保持');
+  // 返回裁剪后的图片URL，供外部使用
+  return croppedImageUrl;
 }
+// 单独获取当前裁剪后图片URL的函数
+function getCroppedImageUrl() {
+  if (!img.value || !cropZone.value) {
+    console.error('图片或裁剪区域未初始化');
+    return null;
+  }
+
+  // 创建临时画布进行裁剪
+  const tempCanvas = document.createElement("canvas");
+  const tempCtx = tempCanvas.getContext("2d");
+
+  // 获取裁剪区域的实际尺寸
+  const cropWidth = cropZone.value.width * cropZone.value.scaleX;
+  const cropHeight = cropZone.value.height * cropZone.value.scaleY;
+  
+  tempCanvas.width = cropWidth;
+  tempCanvas.height = cropHeight;
+
+  // 计算裁剪区域相对于图片的位置
+  const imgBounds = img.value.getBoundingRect();
+  const cropBounds = cropZone.value.getBoundingRect();
+  
+  const relativeLeft = (cropBounds.left - imgBounds.left) / imgBounds.width;
+  const relativeTop = (cropBounds.top - imgBounds.top) / imgBounds.height;
+  const relativeWidth = cropBounds.width / imgBounds.width;
+  const relativeHeight = cropBounds.height / imgBounds.height;
+
+  const originalWidth = img.value.width;
+  const originalHeight = img.value.height;
+
+  const sourceX = relativeLeft * originalWidth;
+  const sourceY = relativeTop * originalHeight;
+  const sourceWidth = relativeWidth * originalWidth;
+  const sourceHeight = relativeHeight * originalHeight;
+
+  // 绘制裁剪后的图片
+  tempCtx.drawImage(
+    img.value._element,
+    sourceX,
+    sourceY,
+    sourceWidth,
+    sourceHeight,
+    0,
+    0,
+    cropWidth,
+    cropHeight
+  );
+
+  // 返回base64格式的图片URL
+  return tempCanvas.toDataURL('image/png');
+}
+
 // canvas初始化已移到弹窗打开时执行
 </script>
 
