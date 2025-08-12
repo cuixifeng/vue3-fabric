@@ -30,7 +30,7 @@ export const addTab = [
         title: "正文",
       },
       {
-        type: "Aa",
+        type: "3D",
         icon: require("@/assets/3d.svg"),
         title: "3D文字",
       },

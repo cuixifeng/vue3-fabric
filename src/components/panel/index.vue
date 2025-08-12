@@ -147,28 +147,44 @@
             </div>
           </div>
         </div>
+        <button v-if="currentItem && currentItem.type =='Image'" class="cutImg" @click="open">图片裁剪</button>
 
-        <!-- <div @click="toGroup">成组</div>
-        <div @click="nogroup">拆组</div> -->
       </div>
     </div>
+    <Cutting
+      ref="popupRef"
+      width="1000px"
+      custom-class="body-padding"
+      :title="`选择裁剪区域`"
+      @confirm="handleConfirm"
+      @close="handleClose"
+    />
     <transition name="anime">
       <workspace-size v-if="sizeShow" @back="sizeShow = false" />
     </transition>
   </div>
 </template>
-<script>
+<script lang="ts">
 import { panel } from "@/constants/panel";
-import { ref, computed, inject } from "vue";
+import { ref, computed, inject, shallowRef,defineEmits  } from "vue";
 import { useStore } from "vuex";
 import Bar from "./bar.vue";
+import Cutting from "./cutting.vue";
 import WorkspaceSize from "./workspace-size.vue";
 import Opactiy from "./opactiy.vue";
 import { ElUpload, ElTooltip } from "element-plus";
 // const Color = () => import("./color.vue");
 import Color from "./color.vue";
 export default {
-  components: { Bar, WorkspaceSize, ElUpload, ElTooltip, Opactiy, Color },
+  components: {
+    Bar,
+    WorkspaceSize,
+    ElUpload,
+    ElTooltip,
+    Opactiy,
+    Color,
+    Cutting,
+  },
   props: {
     onChange: {
       type: Function,
@@ -183,8 +199,16 @@ export default {
     const { state } = useStore();
     const handler = inject("handler");
     const canvas = inject("canvas");
+
+    const openCut = ref(false);
+    
+    const popupRef = shallowRef<InstanceType<typeof Cutting>>();
+
     const workspace = computed(() => {
       return state.workspace;
+    });
+    const currentItem = computed(() => {
+      return state.currentItem;
     });
     const selectedItem = computed(() => {
       return state.selectedItem;
@@ -198,6 +222,24 @@ export default {
     function selectColor(value) {
       props.onChange(null, value);
     }
+   async function handleSubmit()  {
+      popupRef.value?.close();
+    };
+
+    function handleConfirm() {
+      // 处理确认逻辑
+      popupRef.value?.close();
+    }
+
+    function handleClose() {
+      // 处理关闭逻辑
+      openCut.value = false;
+    }
+
+    function open() {
+      console.log( popupRef.value)
+      popupRef.value?.open();
+    }
     return {
       headtool,
       sizeShow,
@@ -207,6 +249,13 @@ export default {
       colorRound,
       colorShow,
       selectedItem,
+      openCut,
+      handleSubmit,
+      handleConfirm,
+      handleClose,
+      open,
+      popupRef,
+      currentItem,
       getActiveClass(panelItem) {
         if (Array.isArray(panelItem.type)) {
           return panelItem.type.includes(type.value) ? "tabActive" : "";
@@ -561,5 +610,10 @@ export default {
   100% {
     opacity: 1;
   }
+}
+.cutImg{
+  width: 100%;
+  position: absolute;
+  bottom: 10px;
 }
 </style>

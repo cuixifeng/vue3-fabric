@@ -88,7 +88,7 @@ export default {
   },
 
   computed: {
-    ...mapState(["currentItem"]),
+    ...mapState(["currentItem","workspace"]),
     islocked() {
       return false;
     },
@@ -109,7 +109,7 @@ export default {
   methods: {
     handleFlip() {
        const canvas = this.canvas;
-
+       console.log(this.workspace,'workspace')
       if (this.currentItem) {
         // 获取当前图层的缩放比例
         const scaleX = this.currentItem.scaleX || 1;
@@ -119,16 +119,10 @@ export default {
         const scaledWidth = this.currentItem.width * scaleX;
         const scaledHeight = this.currentItem.height * scaleY;
         
-        console.log('图层缩放信息:', {
-          scaleX: scaleX,
-          scaleY: scaleY,
-          originalSize: { width: this.currentItem.width, height: this.currentItem.height },
-          scaledSize: { width: scaledWidth, height: scaledHeight }
-        });
 
         // 计算居中位置（考虑缩放后的尺寸）
-        const centerLeft = (1000 - scaledWidth) / 2;
-        const centerTop = (2000 - scaledHeight) / 2;
+        const centerLeft = (this.workspace.width - scaledWidth) / 2;
+        const centerTop = (this.workspace.height - scaledHeight) / 2;
 
         this.currentItem.set({
           left: centerLeft, // 水平居中

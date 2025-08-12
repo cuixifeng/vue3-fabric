@@ -263,18 +263,44 @@ function handleDragStart(e, item, i) {
 function handlerOption(type, itemType) {
   if (type == "image") {
   } else {
-     const random = parseInt(Math.random() * 80);
-    var option = {
-      width: 500,
-      height: 500,
-      fontSize: itemType == 'h1' ? 220 : 180,
-      name: "自定义字体",
-      text: "Hello",
-      type: "textbox",
-      left: workspace.value.left + workspace.value.width / 2 - 150 - random,
-      top: workspace.value.top + workspace.value.height / 2 - 15 - random,
+    console.log(itemType);
+    const urlMap = {
+      VT323:
+        "url(https://fonts.gstatic.com/s/vt323/v17/pxiKyp0ihIEF2isfFJXUdVNF.woff2)",
+      Pacifico:
+        "url(https://fonts.gstatic.com/s/pacifico/v22/FwZY7-Qmy14u9lezJ-6H6MmBp0u-.woff2)",
     };
-    handler.value.add(option);
+    // correctly instantiate new Fontfaces
+    const fontVT323 = new FontFace("VT323", urlMap.VT323, {
+      style: "normal",
+      weight: "normal",
+    });
+    const fontPacifico = new FontFace("Pacifico", urlMap.Pacifico, {
+      style: "normal",
+      weight: "normal",
+    });
+
+    // // wait for them to load
+    Promise.all([fontVT323.load(), fontPacifico.load()]).then(() => {
+      // add the css to the document for those loaded fonts
+      document.fonts.add(fontVT323);
+      document.fonts.add(fontPacifico);
+      const random = parseInt(Math.random() * 80);
+      var option = {
+        width: 500,
+        height: 500,
+        fontSize: itemType == "h1" ? 220 : 180,
+        name: "自定义字体",
+        text: "Hello",
+        type: "textbox",
+        fontFamily:
+          itemType == "Aa" ? "VT323" : itemType == "3D" ? "Pacifico" : "Arial",
+        left: workspace.value.left + workspace.value.width / 2 - 150 - random,
+        top: workspace.value.top + workspace.value.height / 2 - 15 - random,
+      };
+      handler.value.add(option);
+    });
+
     // console.log(type,itemType)
   }
 }
