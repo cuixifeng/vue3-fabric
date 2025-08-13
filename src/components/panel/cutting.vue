@@ -38,7 +38,8 @@ import {
   provide,
   nextTick,
   onMounted,
-  inject
+  inject,
+  computed
 } from "vue";
 const props = withDefaults(
   defineProps<{
@@ -70,6 +71,8 @@ const props = withDefaults(
   }
 );
 const store = useStore();
+const { state } = useStore();
+
 const emit = defineEmits<{
   confirm: [];
   cancel: [];
@@ -81,7 +84,9 @@ const visible = ref(false);
 const cutCanvas = ref(null) as any;
 const img = ref() as any; // 用于存储加载的图片对象
 const cropZone = ref() as any;  
-
+   const workspace = computed(() => {
+      return state.workspace;
+    });
 const handleEvent = () => {
   console.log(store.state.currentItem)
   cropImage()
@@ -151,19 +156,20 @@ function initCanvas() {
       // 计算等比例缩放，使图片适应画布
       const canvasWidth = 950;
       const canvasHeight = 600;
-      const imgWidth = img.value.width * img.value.scaleX;
-      const imgHeight = img.value.height * img.value.scaleY;
+      // 使用原始尺寸，不受原图层缩放影响
+      const imgWidth = img.value.width;
+      const imgHeight = img.value.height;
       
       // 计算缩放比例，保持宽高比
-      const scaleX = (canvasWidth * 0.8) / imgWidth;
-      const scaleY = (canvasHeight * 0.8) / imgHeight;
-      const scale = Math.min(scaleX, scaleY);
+      // const scaleX = (canvasWidth * 0.8) / imgWidth;
+      // const scaleY = (canvasHeight * 0.8) / imgHeight;
+      // const scale = Math.min(scaleX, scaleY);
       
       img.value.set({
-        left: (canvasWidth - imgWidth * scale) / 2,
-        top: (canvasHeight - imgHeight * scale) / 2,
-        scaleX: scale,
-        scaleY: scale,
+        left: (canvasWidth - imgWidth ) / 2,
+        top: (canvasHeight - imgHeight) / 2,
+        scaleX: 1,
+        scaleY: 1,
         selectable: false,
       });
       
@@ -283,13 +289,16 @@ function cropImage() {
   // 更新当前选中的图层
   if (store.state.currentItem && canvas.value) {
     // 使用裁剪后的图片URL更新当前图层
+    console.log(workspace.value,'workspace')
     store.state.currentItem.setSrc(croppedImageUrl, function() {
       // 更新图层尺寸为裁剪后的尺寸
       store.state.currentItem.set({
         width: cropWidth,
         height: cropHeight,
         scaleX: 1,
-        scaleY: 1
+        scaleY: 1,
+        left: (workspace.value.width - cropWidth ) /2 ,
+        top: (workspace.value.height - cropHeight ) /2,
       });
 
       // 重新渲染主画布
@@ -317,57 +326,6 @@ function cropImage() {
 
   // 返回裁剪后的图片URL，供外部使用
   return croppedImageUrl;
-}
-// 单独获取当前裁剪后图片URL的函数
-function getCroppedImageUrl() {
-  if (!img.value || !cropZone.value) {
-    console.error('图片或裁剪区域未初始化');
-    return null;
-  }
-
-  // 创建临时画布进行裁剪
-  const tempCanvas = document.createElement("canvas");
-  const tempCtx = tempCanvas.getContext("2d");
-
-  // 获取裁剪区域的实际尺寸
-  const cropWidth = cropZone.value.width * cropZone.value.scaleX;
-  const cropHeight = cropZone.value.height * cropZone.value.scaleY;
-  
-  tempCanvas.width = cropWidth;
-  tempCanvas.height = cropHeight;
-
-  // 计算裁剪区域相对于图片的位置
-  const imgBounds = img.value.getBoundingRect();
-  const cropBounds = cropZone.value.getBoundingRect();
-  
-  const relativeLeft = (cropBounds.left - imgBounds.left) / imgBounds.width;
-  const relativeTop = (cropBounds.top - imgBounds.top) / imgBounds.height;
-  const relativeWidth = cropBounds.width / imgBounds.width;
-  const relativeHeight = cropBounds.height / imgBounds.height;
-
-  const originalWidth = img.value.width;
-  const originalHeight = img.value.height;
-
-  const sourceX = relativeLeft * originalWidth;
-  const sourceY = relativeTop * originalHeight;
-  const sourceWidth = relativeWidth * originalWidth;
-  const sourceHeight = relativeHeight * originalHeight;
-
-  // 绘制裁剪后的图片
-  tempCtx.drawImage(
-    img.value._element,
-    sourceX,
-    sourceY,
-    sourceWidth,
-    sourceHeight,
-    0,
-    0,
-    cropWidth,
-    cropHeight
-  );
-
-  // 返回base64格式的图片URL
-  return tempCanvas.toDataURL('image/png');
 }
 
 // canvas初始化已移到弹窗打开时执行

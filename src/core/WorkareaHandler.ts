@@ -56,15 +56,15 @@ class EditorWorkspace {
 
     var deleteImg = document.createElement("img");
     deleteImg.src = deleteIcon;
-    function renderIcon(ctx, left, top, _styleOverride, fabricObject) {
-      const size = this.cornerSize;
+    function renderIcon(ctx: any, left: any, top: any, _styleOverride: any, fabricObject: any) {
+      const size = 24; // 使用固定大小而不是this.cornerSize
       ctx.save();
       ctx.translate(left, top);
       ctx.rotate(fabric.util.degreesToRadians(fabricObject.angle));
       ctx.drawImage(deleteImg, -size / 2, -size / 2, size, size);
       ctx.restore();
     }
-    function deleteObject(_eventData, transform) {
+    function deleteObject(_eventData: any, transform: any) {
       const canvas = transform.target.canvas;
       canvas.remove(transform.target);
       canvas.requestRenderAll();
@@ -77,7 +77,6 @@ class EditorWorkspace {
       cursorStyle: "pointer",
       mouseUpHandler: deleteObject as any,
       render: renderIcon,
-      cornerSize: 24,
     });
     this.canvas.add(workspace);
     this.canvas.renderAll();
