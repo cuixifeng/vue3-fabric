@@ -1,10 +1,10 @@
-import Handler from "./handler";
+import Handler from './handler'
 
 class ImageHandler {
-  private handler: Handler;
-  constructor(handler: Handler) {
-    this.handler = handler;
-  }
+    private handler: Handler
+    constructor(handler: Handler) {
+        this.handler = handler
+    }
 }
 
-export default ImageHandler;
+export default ImageHandler

@@ -14,7 +14,7 @@
     "dev": "vite",
     "serve": "vue-cli-service serve",
     "build": "vite build",
-    "lint": "vue-cli-service lint",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore --max-warnings 0",
     "prepare": "husky install",
     "type-check": "vue-tsc --noEmit",
     "commit": "git-cz"
