@@ -162,6 +162,8 @@ class FabricHandler {
 
         // 创建Fabric图片对象
         const canvasImage = new fabric.Image(imageUrl, imageOptions)
+        
+
         canvasImage.crossOrigin = 'Anonymous'
 
         // 设置高质量渲染属性

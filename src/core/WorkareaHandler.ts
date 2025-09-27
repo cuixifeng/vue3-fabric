@@ -1,6 +1,7 @@
 import { fabric } from 'fabric'
 import Handler from './handler'
 import { WorkareaOption, FabricRect, FabricImage } from '@/types/utils'
+import initAligningGuidelines from './AligningGuidelines'
 
 class EditorWorkspace {
     canvas: fabric.Canvas
@@ -191,6 +192,10 @@ class EditorWorkspace {
             const obj = this._getBgPosition(this.bgObject)
             this.bgObject.set(obj)
         }
+        
+        // 重新初始化对齐辅助线，确保使用正确的zoom值
+        initAligningGuidelines(this.canvas, this.canvas.getZoom())
+        
         if (cb) cb(this.workspace.left, this.workspace.top)
     }
 

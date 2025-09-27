@@ -17,6 +17,7 @@ import { fabric } from 'fabric'
 import { ref, onMounted } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import Handler from '@/core/handler'
+import initAligningGuidelines from '@/core/AligningGuidelines'
 import { useStore } from 'vuex'
 
 // 定义 props
@@ -130,7 +131,6 @@ onMounted(() => {
 
     // 创建画布
     canvas = new fabric.Canvas(canvasElement, canvasOptions)
-
     // 设置高质量渲染上下文
     const ctx = canvas.getContext('2d')
     if (ctx) {
@@ -180,8 +180,8 @@ onMounted(() => {
     setTimeout(() => {
         if (handler.value && handler.value.workareaHandler) {
             handler.value.workareaHandler.auto() // 自动缩放并居中
-            console.log('画布已居中显示，工作区尺寸：1000x2000')
-            console.log('高清渲染已启用，设备像素比：', devicePixelRatio)
+            // 在缩放设置完成后初始化对齐辅助线，确保获取正确的zoom值
+            initAligningGuidelines(canvas, canvas.getZoom())
         }
     }, 100)
     // 添加 wheel 事件监听器
@@ -227,11 +227,6 @@ onMounted(() => {
             pointer.x <= workspaceRight &&
             pointer.y >= workspaceTop &&
             pointer.y <= workspaceBottom
-
-        console.log('工作区尺寸:', workspace.width, 'x', workspace.height)
-        console.log('鼠标位置:', pointer.x, pointer.y)
-        console.log('工作区边界:', workspaceLeft, workspaceTop, workspaceRight, workspaceBottom)
-        console.log('是否在工作区内:', isInWorkspace)
 
         return isInWorkspace
     }
