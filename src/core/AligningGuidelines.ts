@@ -2,8 +2,8 @@ function initAligningGuidelines(canvas,zoom) {
 	var ctx = canvas.getSelectionContext(),
 		aligningLineOffset = 5,
 		aligningLineMargin = 4,
-		aligningLineWidth = 1,
-		aligningLineColor = '#666666',
+		aligningLineWidth = 0.3,
+		aligningLineColor = '#cccccc',
 		viewportTransform,
 		zoom = zoom;
 
@@ -209,7 +209,9 @@ function initAligningGuidelines(canvas,zoom) {
 	});
 
 	canvas.on('before:render', function() {
-		canvas.clearContext(canvas.contextTop);
+		if (canvas.contextTop) {
+			canvas.clearContext(canvas.contextTop);
+		}
 	});
 
 	canvas.on('after:render', function() {

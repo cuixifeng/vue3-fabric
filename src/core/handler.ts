@@ -444,6 +444,12 @@ class Handler implements HandlerOptions {
             type = 'jpeg'
         }
         const viewportTransform = this.canvas.viewportTransform || []
+        
+        // 临时清除上层画布以避免导出时的渲染问题
+        if (this.canvas.contextTop) {
+            this.canvas.clearContext(this.canvas.contextTop)
+        }
+        
         this.canvas.setViewportTransform([1, 0, 0, 1, 0, 0])
         const { width, height, left, top } = this.workareaHandler.workspace as any
         const image = this.canvas.toDataURL({
@@ -607,7 +613,6 @@ class Handler implements HandlerOptions {
      * @param {*} json
      */
     importJSON = async (json: any) => {
-        console.log('json', json)
         if (!this.canvas.contextTop) return
         this.isimporting = true
         try {
@@ -617,14 +622,9 @@ class Handler implements HandlerOptions {
             if (typeof json === 'string') {
                 json = JSON.parse(json)
             }
-            const workarea = json.find((obj: any) => obj.id == 'workarea')
-            // this.workareaHandler.initialize();
-            if (workarea && this.workareaHandler.workspace) {
-                this.workareaHandler.setSize(workarea.width, workarea.height)
-            } else {
-                this.workareaHandler.initialize()
-                this.workareaHandler.setSize(workarea.width, workarea.height)
-            }
+            
+       
+          
             for (let i = 0; i < json.length; i++) {
                 const obj = json[i]
                 if (obj.id == 'workarea') continue
@@ -638,6 +638,7 @@ class Handler implements HandlerOptions {
                 if (!obj.id) {
                     obj.id = uuid()
                 }
+                console.log(obj,'obj')
                 await this.add(obj, true)
             }
             this.canvas.renderAll()
@@ -679,10 +680,29 @@ class Handler implements HandlerOptions {
             obj.type = 'Image'
         }
         try {
-            createdObj = this.fabricObjects[obj.type](newOption)
+            // 首先尝试使用定义的方法
+            if (typeof this.fabricObjects[obj.type] === 'function') {
+                createdObj = this.fabricObjects[obj.type](newOption)
+            } else {
+                // 如果没有找到对应的方法，使用通用创建方法
+                createdObj = this.fabricObjects.createObject(obj.type, newOption)
+            }
         } catch (e) {
-            console.error(e)
-            return
+            console.error(`Error creating object of type ${obj.type}:`, e)
+            // 最后的回退：创建一个基本矩形
+            try {
+                createdObj = this.fabricObjects.rect({
+                    ...newOption,
+                    fill: 'rgba(255, 0, 0, 0.3)',
+                    stroke: 'red',
+                    strokeWidth: 2,
+                    width: 100,
+                    height: 100
+                })
+            } catch (fallbackError) {
+                console.error('Failed to create fallback object:', fallbackError)
+                return
+            }
         }
 
         if (_.isPromise(createdObj)) {

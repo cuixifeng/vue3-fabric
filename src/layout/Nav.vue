@@ -61,7 +61,7 @@ const menus = ref([
     [
         {
             type: 'guide',
-            title: '导入文件',
+            title: '导入JSON模板',
             status: () => {
                 guideShow.value = true
                 menuShow.value = false
@@ -71,9 +71,13 @@ const menus = ref([
     [
         {
             type: 'json',
-            title: 'json打印',
+            title: '导出JSON模板',
             status: () => {
-                console.log(JSON.stringify(handler.value.exportJSON()))
+                let blob = new Blob([JSON.stringify(handler.value.exportJSON())]) //  创建 blob 对象
+                let link = document.createElement('a')
+                link.href = URL.createObjectURL(blob) //  创建一个 URL 对象并传给 a 的 href
+                link.download = 'template.json' //  设置下载的默认文件名
+                link.click()
             }
         },
         {
@@ -99,6 +103,7 @@ function handlerEvent(item) {
 }
 
 function onRender(data) {
+    console.log(data)
     guideShow.value = false
     // console.log(data);
     // const eleLink = document.createElement("a");
@@ -108,7 +113,7 @@ function onRender(data) {
     // document.body.appendChild(eleLink);
     // eleLink.click();
     // document.body.removeChild(eleLink);
-    handler.value.importJSON(data.json)
+    handler.value.importJSON(data)
 }
 </script>
 <style lang="scss">

@@ -197,6 +197,62 @@ class FabricHandler {
     async background(options: WorkareaObject) {
         return this.addImage(options)
     }
+
+    // 添加基本几何形状支持
+    rect(options: WorkareaObject) {
+        return new fabric.Rect(options)
+    }
+
+    circle(options: WorkareaObject) {
+        return new fabric.Circle(options)
+    }
+
+    triangle(options: WorkareaObject) {
+        return new fabric.Triangle(options)
+    }
+
+    polygon(options: WorkareaObject) {
+        return new fabric.Polygon(options.points || [], options)
+    }
+
+    line(options: WorkareaObject) {
+        const points = options.points || [0, 0, 100, 100]
+        return new fabric.Line(points, options)
+    }
+
+    path(options: WorkareaObject) {
+        return new fabric.Path(options.path || '', options)
+    }
+
+    ellipse(options: WorkareaObject) {
+        return new fabric.Ellipse(options)
+    }
+
+    text(options: WorkareaObject) {
+        return new fabric.Text(options.text || '', options)
+    }
+
+    itext(options: WorkareaObject) {
+        return new fabric.IText(options.text || '', options)
+    }
+
+    // 添加通用对象创建方法，用于处理未知类型
+    createObject(type: string, options: WorkareaObject) {
+        // 尝试使用 fabric 的构造函数
+        const fabricClass = (fabric as any)[type]
+        if (fabricClass && typeof fabricClass === 'function') {
+            return new fabricClass(options)
+        }
+        
+        // 如果找不到对应的类型，返回一个基本的矩形作为占位符
+        console.warn(`Unknown fabric object type: ${type}, creating rect as fallback`)
+        return new fabric.Rect({
+            ...options,
+            fill: 'rgba(255, 0, 0, 0.3)', // 红色半透明，表示这是一个错误的对象
+            stroke: 'red',
+            strokeWidth: 2
+        })
+    }
 }
 
 export default FabricHandler

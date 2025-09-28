@@ -208,13 +208,7 @@ async function chooseFiles() {
     } else {
         // 打开文件
         arrFileHandle = await window.showOpenFilePicker({
-            types: [
-                {
-                    accept: {
-                        'image/*': types.value.map((key: string) => '.' + key) //".png", ".gif", ".jpeg", ".jpg", ".webp",
-                    }
-                }
-            ],
+            types: [{}],
             // 可以选择多个图片
             multiple: false
         })
@@ -224,6 +218,7 @@ async function chooseFiles() {
         // 获取文件内容
         if (fileHandle.getFile()) {
             const fileData = await fileHandle.getFile()
+            console.log(fileData)
             fileList.value.push(fileData)
         } else {
             fileList.value.push(fileHandle)
@@ -243,10 +238,20 @@ async function onGuide() {
     //     emit("render", data);
     //   }
     // }
+
     const files = fileList.value[0]
-    const result = await toJson(files)
-    console.log(result)
-    emit('render', result)
+    const reader = new FileReader()
+    reader.onload = function (e) {
+        try {
+            // 解析JSON
+            const jsonData = JSON.parse(e.target.result)
+            // 发送解析后的对象，而不是字符串
+            emit('render', jsonData)
+        } catch (err) {
+            showError('JSON解析错误: ' + err.message)
+        }
+    }
+    reader.readAsText(files)
 }
 </script>
 <style lang="scss" scoped>
