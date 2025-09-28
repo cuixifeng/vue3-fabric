@@ -624,7 +624,7 @@ class Handler implements HandlerOptions {
             }
             
        
-          
+            this.workareaHandler.initialize()
             for (let i = 0; i < json.length; i++) {
                 const obj = json[i]
                 if (obj.id == 'workarea') continue
