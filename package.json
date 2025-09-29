@@ -20,7 +20,7 @@
     "commit": "git-cz"
   },
   "dependencies": {
-    "@element-plus/icons-vue": "^2.1.0",
+    "@element-plus/icons-vue": "^2.3.2",
     "@scena/guides": "^0.28.0",
     "@vueuse/core": "^10.6.0",
     "axios": "^1.4.0",
