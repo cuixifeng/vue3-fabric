@@ -28,11 +28,11 @@ export default createStore({
             state.icons = value
         },
         setActivateItem(state, value) {
-            state.selectedItem = null
             state.selectedItem = value
         },
         setCurrentItem(state, value) {
             state.currentItem = value
+            state.selectedItem = value
         },
         setWorkarea(state, value) {
             state.workspace = value
