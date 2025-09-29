@@ -7,7 +7,6 @@
 - 图片编辑✅
 - 图片裁剪✅
 - pdf 解析
-- ppt 解析 (pptxtojson,pptxgenjs)
 - 滤镜
 - 动画
 - 蒙版
