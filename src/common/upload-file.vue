@@ -216,11 +216,13 @@ async function chooseFiles() {
     // 遍历选择的文件
     for (const fileHandle of arrFileHandle) {
         // 获取文件内容
-        if (fileHandle.getFile()) {
+        try {
             const fileData = await fileHandle.getFile()
             console.log(fileData)
             fileList.value.push(fileData)
-        } else {
+        } catch (error) {
+            console.error('Error getting file:', error)
+            // 如果 getFile 失败，直接使用 fileHandle
             fileList.value.push(fileHandle)
         }
     }

@@ -1,5 +1,6 @@
 import { createStore } from 'vuex'
 import request from '@/service/request'
+import { set } from 'lodash-es'
 
 export default createStore({
     state: {
@@ -10,7 +11,8 @@ export default createStore({
         icons: [],
         selectedItem: null, // 选中的画布元素
         workspace: null, // 画布对象
-        currentItem: null //当前点击选择的元素
+        currentItem: null, //当前点击选择的元素
+        recorder: [] // 操作记录
     },
     getters: {},
     mutations: {
@@ -36,6 +38,17 @@ export default createStore({
         },
         setWorkarea(state, value) {
             state.workspace = value
+        },
+        setRecorder(state, value) {
+            state.recorder = value
+        },
+        addRecorderEvent(state, event) {
+            // 将单个事件追加到数组
+            state.recorder.push(event)
+        },
+        clearRecorder(state) {
+            // 清空已录制事件
+            state.recorder = []
         }
     },
     actions: {

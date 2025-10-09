@@ -34,8 +34,12 @@
             <panel :onChange="onChange" />
         </template>
     </framework>
+    <!-- <player /> -->
+    <Recorder />
 </template>
 <script setup>
+import Player from '@/common/Player.vue'
+import Recorder from '@/common/Recorder.vue'
 import Framework from '../layout/Framework.vue'
 import Sidebar from '../components/sidebar/bar.vue'
 import Resource from '../components/sidebar/resource.vue'

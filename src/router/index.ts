@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import Editor from '../page/editor.vue'
 import Canvas from '../components/workarea/canvas.vue'
+import Replay from '../page/Replay.vue'
 const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
@@ -11,6 +12,11 @@ const routes: Array<RouteRecordRaw> = [
         path: '/test',
         name: 'test',
         component: Canvas
+    },
+    {
+        path: '/replay',
+        name: 'replay',
+        component: Replay
     }
 ]
 
