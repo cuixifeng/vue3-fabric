@@ -1,6 +1,6 @@
 <template>
     <div class="bar">
-        <div class="func-content" v-show="isTip">
+        <!-- <div class="func-content" v-show="isTip">
             <el-tooltip
                 class="item"
                 effect="dark"
@@ -10,7 +10,7 @@
             >
                 <i class="iconfont icon-cengji" @click.stop="onLayerShow"></i>
             </el-tooltip>
-        </div>
+        </div> -->
         <div class="func-content" v-show="isTip">
             <el-tooltip
                 class="item"
@@ -43,21 +43,6 @@
                 :disabled="islocked"
             >
                 <i class="iconfont icon-fuzhi" @click="copy"></i>
-            </el-tooltip>
-        </div>
-        <div class="func-content" v-show="isTip">
-            <el-tooltip
-                class="item"
-                effect="dark"
-                content="删除"
-                placement="top"
-                :disabled="islocked"
-            >
-                <i
-                    class="iconfont icon-delete"
-                    @click="handleDelete"
-                    :class="islocked ? 'icon_noactive' : ''"
-                ></i>
             </el-tooltip>
         </div>
     </div>

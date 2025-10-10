@@ -72,7 +72,6 @@ function initAligningGuidelines(canvas,zoom) {
 	canvas.on('mouse:down', function () {
 		viewportTransform = canvas.viewportTransform;
 		zoom = canvas.getZoom();
-		console.log(zoom,'22')
 	});
 
 	canvas.on('object:moving', function(e) {
@@ -216,7 +215,6 @@ function initAligningGuidelines(canvas,zoom) {
 
 	canvas.on('after:render', function() {
 		for (var i = verticalLines.length; i--; ) {
-			console.log(verticalLines[i])
 			drawVerticalLine(verticalLines[i]);
 		}
 		for (var i = horizontalLines.length; i--; ) {

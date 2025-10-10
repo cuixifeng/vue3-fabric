@@ -180,10 +180,107 @@
                 </template>
             </Waterifall>
         </div>
+        <div class="Img" v-if="activeModule.type == 'Img'">
+            <div
+                @click="selectlayer(index + 1, item)"
+                :class="['layer', selectIndex === index + 1 ? 'active' : '']"
+                v-for="(item, index) in state.alllayers.slice(1)"
+                :key="item.id"
+            >
+                <div v-if="item.type != 'textbox'" class="image">
+                    <img :src="item.src" alt="layer" />
+                </div>
+                <div class="text" v-else>
+                    {{ item.text }}
+                </div>
+                <div v-if="selectIndex === index + 1" class="del" @click.stop="moveLayerUp(item)">
+                    <svg
+                        width="1.2em"
+                        height="1.2em"
+                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink"
+                        viewBox="0 0 23.76 29.241"
+                        class="icon"
+                    >
+                        <g class="b">
+                            <path
+                                fill="currentColor"
+                                d="M5.286,19.191a1.154,1.154,0,1,0,1.632,1.632l3.8-3.8V28.087a1.154,1.154,0,0,0,2.308,0V17.022l3.8,3.8a1.154,1.154,0,1,0,1.632-1.632L12.689,13.42a1.153,1.153,0,0,0-1.632,0Z"
+                            ></path>
+                            <path
+                                fill="#fff"
+                                stroke="currentColor"
+                                stroke-miterlimit="10"
+                                stroke-width="2"
+                                d="M22.76,2.793v4.5a1.793,1.793,0,0,1-1.793,1.793H2.793A1.793,1.793,0,0,1,1,7.289v-4.5A1.793,1.793,0,0,1,2.793,1H20.967A1.793,1.793,0,0,1,22.76,2.793"
+                            ></path>
+                            <rect
+                                fill="currentColor"
+                                width="21.76"
+                                height="8.082"
+                                rx="1.793"
+                                transform="translate(1 1)"
+                            ></rect>
+                        </g>
+                    </svg>
+                </div>
+                <div v-if="selectIndex === index + 1" class="del" @click.stop="moveLayerDown(item)">
+                    <svg
+                        width="1.2em"
+                        height="1.2em"
+                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink"
+                        viewBox="0 0 23.76 29.241"
+                        class="icon"
+                    >
+                        <g class="b">
+                            <path
+                                fill="currentColor"
+                                d="M18.473,10.05a1.154,1.154,0,1,0-1.632-1.632l-3.8,3.8V1.154a1.154,1.154,0,1,0-2.308,0V12.219l-3.8-3.8A1.154,1.154,0,0,0,5.3,10.05l5.771,5.771a1.153,1.153,0,0,0,1.632,0Z"
+                            ></path>
+                            <path
+                                fill="#fff"
+                                stroke="currentColor"
+                                stroke-miterlimit="10"
+                                stroke-width="2"
+                                d="M1,26.448v-4.5a1.793,1.793,0,0,1,1.793-1.793H20.967a1.793,1.793,0,0,1,1.793,1.793v4.5a1.793,1.793,0,0,1-1.793,1.793H2.793A1.793,1.793,0,0,1,1,26.448"
+                            ></path>
+                            <rect
+                                fill="currentColor"
+                                width="21.76"
+                                height="8.082"
+                                rx="1.793"
+                                transform="translate(1 20.159)"
+                            ></rect>
+                        </g>
+                    </svg>
+                </div>
+                <!-- <div @click="deletItem(item)" class="del">
+                    <svg
+                        width="1.2em"
+                        height="1.2em"
+                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink"
+                        viewBox="0 0 23.8 28"
+                        class="icon"
+                    >
+                        <g fill="currentColor">
+                            <g class="b" transform="translate(0 0)">
+                                <path
+                                    class="c"
+                                    d="M14.155,2.1a.7.7,0,0,1,.686.563L15.289,4.9H8.511l.447-2.237A.7.7,0,0,1,9.645,2.1ZM17.43,4.9,16.9,2.251A2.8,2.8,0,0,0,14.155,0H9.645A2.8,2.8,0,0,0,6.9,2.251L6.37,4.9H1.05a1.05,1.05,0,1,0,0,2.1h.9L3.626,24.206A4.2,4.2,0,0,0,7.806,28h8.186a4.2,4.2,0,0,0,4.181-3.794L21.846,7h.9a1.05,1.05,0,0,0,0-2.1ZM19.736,7,18.084,24a2.1,2.1,0,0,1-2.091,1.9H7.806A2.1,2.1,0,0,1,5.717,24L4.064,7ZM8.75,13.3a1.05,1.05,0,1,1,2.1,0v6.3a1.05,1.05,0,0,1-2.1,0ZM14,12.25a1.05,1.05,0,0,0-1.05,1.05v6.3a1.05,1.05,0,0,0,2.1,0V13.3A1.051,1.051,0,0,0,14,12.25"
+                                    transform="translate(0 0)"
+                                ></path>
+                            </g>
+                        </g>
+                    </svg>
+                </div> -->
+            </div>
+        </div>
     </div>
 </template>
 <script setup>
-import { computed, shallowRef, ref, inject } from 'vue'
+import { computed, shallowRef, ref, inject, watch, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import { addTab } from '@/constants/addtab'
 import material from '@/constants/material'
@@ -191,10 +288,14 @@ import { ArrowDown } from '@element-plus/icons-vue'
 import PanelBlock from '@/common/panel-block.vue'
 import Waterifall from '@/common/waterfall.vue'
 import { ElImage, ElDropdown, ElDropdownMenu, ElDropdownItem, ElIcon, ElUpload } from 'element-plus'
-const { state } = useStore()
+
+const store = useStore()
+const { state } = store
 const repoSrc = ref('https://haixin-fang.github.io/vue-design-editor-static/')
 const selectItem = ref()
+const selectIndex = ref(0) //选中层级
 const handler = inject('handler')
+const canvas = inject('canvas')
 const workspace = computed(() => {
     return state.workspace
 })
@@ -211,6 +312,89 @@ const imageList = computed(() => {
     }
     return []
 })
+
+const selectlayer = (index, targetObject) => {
+    selectIndex.value = index
+    if (handler.value && targetObject) {
+        handler.value.select(targetObject)
+        // 同步更新store中的currentItem
+        store.commit('setCurrentItem', targetObject)
+    }
+}
+
+// 监听store中currentItem的变化，同步更新selectIndex
+watch(
+    () => state.currentItem,
+    (newCurrentItem) => {
+        if (newCurrentItem && canvas.value) {
+            // 获取所有对象（跳过第一个背景对象）
+            const allObjects = canvas.value.getObjects().slice(1)
+            // 找到当前选中对象在图层列表中的索引
+            const index = allObjects.findIndex((obj) => obj === newCurrentItem)
+            if (index !== -1) {
+                // 更新selectIndex（+1是因为显示时从1开始计数）
+                selectIndex.value = index + 1
+            } else if (newCurrentItem.id === 'workarea' || !newCurrentItem.id) {
+                // 如果选中的是工作区或空白区域，重置选中状态
+                selectIndex.value = 0
+            }
+        } else {
+            // 如果没有选中任何对象，重置选中状态
+            selectIndex.value = 0
+        }
+    },
+    { immediate: true }
+)
+
+// 升序操作：图层在列表中向上移动（在画布中向后移动）
+const moveLayerUp = (targetObject) => {
+    if (handler.value && targetObject) {
+        handler.value.sendBackwards(targetObject)
+        // 更新图层列表
+        updateLayersList()
+        // 更新selectIndex以跟随移动的图层
+        updateSelectIndexAfterMove(targetObject)
+    }
+}
+
+// 降序操作：图层在列表中向下移动（在画布中向前移动）
+const moveLayerDown = (targetObject) => {
+    if (handler.value && targetObject) {
+        handler.value.bringForward(targetObject)
+        // 更新图层列表
+        updateLayersList()
+        // 更新selectIndex以跟随移动的图层
+        updateSelectIndexAfterMove(targetObject)
+    }
+}
+
+// 在图层移动后更新selectIndex
+const updateSelectIndexAfterMove = (targetObject) => {
+    // 等待下一个tick，确保图层列表已更新
+    nextTick(() => {
+        if (canvas.value) {
+            const allObjects = canvas.value.getObjects()
+            // 跳过第一个对象（背景），找到目标对象的新索引
+            const newIndex = allObjects.slice(1).findIndex((obj) => obj === targetObject)
+            if (newIndex !== -1) {
+                selectIndex.value = newIndex + 1
+            }
+        }
+    })
+}
+
+// 更新图层列表状态
+const updateLayersList = () => {
+    if (canvas.value) {
+        store.commit('setLayers', canvas.value.getObjects())
+    }
+}
+const deletItem = (target) => {
+    if (selectIndex.value > 0) {
+        canvas.value.remove(target)
+        canvas.value.renderAll()
+    }
+}
 
 const icons = computed(() => {
     return state.icons
@@ -243,7 +427,6 @@ function handlerOption(type, itemType) {
     if (type == 'image') {
         console.log('image')
     } else {
-        console.log(itemType)
         const urlMap = {
             VT323: 'url(https://fonts.gstatic.com/s/vt323/v17/pxiKyp0ihIEF2isfFJXUdVNF.woff2)',
             Pacifico:
@@ -575,5 +758,125 @@ async function uploadImage(e, type = 'Image') {
         animation: dot 2s infinite steps(3, start);
         overflow: hidden;
     }
+}
+.Img {
+    padding: 10px;
+}
+.layer.active {
+    background-color: #e6e6e6;
+}
+.layer .image {
+    width: 0;
+    height: 100%;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: #f9fafb;
+}
+.layer .del {
+    -webkit-flex-shrink: 0;
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    font-size: 1.125rem;
+    color: #6b7280;
+    background: #6b72801a;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+}
+.layer {
+    width: 100%;
+    height: 4rem;
+    position: relative;
+    margin-bottom: 0.5rem;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    gap: 0.75rem;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 3px #0000000d;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+.layer .text {
+    width: 0;
+    height: 100%;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: start;
+    -webkit-justify-content: flex-start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    padding: 0 0.5rem;
+}
+.layer .image img {
+    height: 85%;
+    -o-object-fit: contain;
+    object-fit: contain;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    pointer-events: none;
+    border-radius: 0.375rem;
+    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px #0000001a;
 }
 </style>

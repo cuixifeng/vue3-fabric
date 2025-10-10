@@ -190,7 +190,6 @@ class Handler implements HandlerOptions {
             this.canvas.requestRenderAll()
         }
 
-        console.log('全局高清渲染配置已应用')
     }
 
     // 设置scaling事件处理
@@ -214,8 +213,6 @@ class Handler implements HandlerOptions {
                 this.onObjectScaled(target)
             }
         })
-
-        console.log('Scaling事件监听器已设置')
     }
 
     // 对象正在缩放时的处理
@@ -730,7 +727,6 @@ class Handler implements HandlerOptions {
                 createdObj.id = this.utils.uuid()
             }
             if (isAdd) {
-                console.log(createdObj, 'createdObj')
                 this.canvas.add(createdObj)
                 // // 确保背景图始终在最顶层
                 // this.ensureBackgroundOnTop();

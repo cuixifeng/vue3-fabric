@@ -17,7 +17,6 @@ const startRecording = () => {
     recorder = rrweb.record({
         emit(event) {
             // 将事件逐条追加到数组
-            console.log('录制事件:', event)
             store.commit('addRecorderEvent', event)
         },
         // 录制 Fabric 的 canvas 操作

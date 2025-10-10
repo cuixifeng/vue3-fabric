@@ -34,11 +34,10 @@
             <panel :onChange="onChange" />
         </template>
     </framework>
-    <!-- <player /> -->
     <Recorder />
 </template>
 <script setup>
-import Player from '@/common/Player.vue'
+// import Player from '@/common/Player.vue'
 import Recorder from '@/common/Recorder.vue'
 import Framework from '../layout/Framework.vue'
 import Sidebar from '../components/sidebar/bar.vue'
@@ -111,7 +110,6 @@ function onDrap(e) {
 function onAddItem(item) {
     const id = uuidv4()
     const option = Object.assign({}, item.option, { id })
-    console.log(option, 'option')
 
     handler.value.add(option)
 }

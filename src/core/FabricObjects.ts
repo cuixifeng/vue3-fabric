@@ -66,7 +66,6 @@ fabric.Canvas.prototype._historySaveAction = function (e) {
     if (this.historyProcessing) return
     if (!e || (e.target && !e.target.excludeFromExport)) {
         const json = this._historyNext()
-        console.log(JSON.parse(json), 'json')
         this.historyUndo.push(json)
         this.historyNextState = this._historyNext()
         this.fire('history:append', { json: json })

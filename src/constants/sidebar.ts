@@ -39,14 +39,13 @@ export const modulelist = [
         drag: false,
         icon: 'icon-editor-background',
         fileType: ['jpg', 'png', 'gif', 'svg']
+    },
+    {
+        type: 'Img',
+        text: '图层',
+        drag: false,
+        icon: 'icon-templet-'
     }
-    // {
-    //   type: "Video",
-    //   text: "视频",
-    //   drag: false,
-    //   icon: "icon-shipinbofang",
-    //   fileType: ["mp4"],
-    // },
     // {
     //   type: "qrcode",
     //   text: "二维码",

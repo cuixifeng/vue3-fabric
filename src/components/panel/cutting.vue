@@ -291,7 +291,7 @@ function cropImage() {
             })
 
             // 重新渲染主画布
-            canvas.value.renderAll()
+            // canvas.value.renderAll()
 
             console.log('图片裁剪完成，已更新到主画布')
         })

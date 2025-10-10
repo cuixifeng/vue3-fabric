@@ -12,7 +12,8 @@ export default createStore({
         selectedItem: null, // 选中的画布元素
         workspace: null, // 画布对象
         currentItem: null, //当前点击选择的元素
-        recorder: [] // 操作记录
+        recorder: [], // 操作记录
+        alllayers: [] // 所有图层
     },
     getters: {},
     mutations: {
@@ -49,6 +50,9 @@ export default createStore({
         clearRecorder(state) {
             // 清空已录制事件
             state.recorder = []
+        },
+        setLayers(state, value) {
+            state.alllayers = value
         }
     },
     actions: {

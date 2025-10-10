@@ -236,7 +236,6 @@ onMounted(() => {
         // 检查是否点击了某个对象
         if (opt.target) {
             const clickedObject = opt.target
-            console.log('点击的对象:', clickedObject)
             store.commit('setCurrentItem', clickedObject)
         } else {
             console.log('点击的是空白区域')
@@ -254,14 +253,23 @@ onMounted(() => {
             canvas.selection = false
             canvas.defaultCursor = 'grab'
 
-            console.log('开始拖拽 - 点击在工作区外部')
-
             // 监听全局鼠标移动和释放事件
             document.addEventListener('mousemove', handleMouseMove)
             document.addEventListener('mouseup', handleMouseUp)
         } else if (isInWorkspace) {
             console.log('点击在工作区内部 - 不启用拖拽')
         }
+    })
+
+    // 1. 监听对象添加
+    canvas.on('object:added', () => {
+        store.commit('setLayers', canvas.getObjects())
+        console.log(canvas.getObjects())
+    })
+
+    // 2. 监听对象移除
+    canvas.on('object:removed', () => {
+        store.commit('setLayers', canvas.getObjects())
     })
 
     // 处理鼠标移动事件（拖拽）
@@ -290,8 +298,6 @@ onMounted(() => {
             isDragging = false
             canvas.selection = true
             canvas.defaultCursor = 'default'
-
-            console.log('结束拖拽')
 
             // 移除全局事件监听器
             document.removeEventListener('mousemove', handleMouseMove)
