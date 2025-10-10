@@ -2,9 +2,20 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
 import ViteTransfrom from 'vite-plugin-require-transform'
-
+import viteCompression from 'vite-plugin-compression'
 export default defineConfig({
-    plugins: [vue(), ViteTransfrom()],
+    plugins: [
+        vue(),
+        ViteTransfrom(),
+        viteCompression({
+            verbose: true, // 是否在控制台输出结果
+            disable: false, // 默认不禁止压缩
+            deleteOriginFile: false, // 是否删除原文件
+            threshold: 10240, // 体积小于 threshold 字节的文件将被删除
+            algorithm: 'gzip', // 使用 gzip 压缩
+            ext: '.gz' // 生成的压缩包后缀
+        })
+    ],
     server: {
         host: '0.0.0.0',
         port: 8888
