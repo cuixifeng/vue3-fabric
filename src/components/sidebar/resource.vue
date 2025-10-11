@@ -193,7 +193,7 @@
                 <div class="text" v-else>
                     {{ item.text }}
                 </div>
-                <div v-if="selectIndex === index + 1" class="del" @click.stop="moveLayerUp(item)">
+                <div v-if="selectIndex === index + 1" class="del" @click.stop="moveLayerDown(item)">
                     <svg
                         width="1.2em"
                         height="1.2em"
@@ -224,7 +224,7 @@
                         </g>
                     </svg>
                 </div>
-                <div v-if="selectIndex === index + 1" class="del" @click.stop="moveLayerDown(item)">
+                <div v-if="selectIndex === index + 1" class="del" @click.stop="moveLayerUp(item)">
                     <svg
                         width="1.2em"
                         height="1.2em"
@@ -349,7 +349,9 @@ watch(
 // 升序操作：图层在列表中向上移动（在画布中向后移动）
 const moveLayerUp = (targetObject) => {
     if (handler.value && targetObject) {
-        handler.value.sendBackwards(targetObject)
+        handler.value.bringForward(targetObject)
+        // handler.value.sendBackwards(targetObject)
+        console.log('move up', canvas.value.getObjects())
         // 更新图层列表
         updateLayersList()
         // 更新selectIndex以跟随移动的图层
@@ -359,8 +361,9 @@ const moveLayerUp = (targetObject) => {
 
 // 降序操作：图层在列表中向下移动（在画布中向前移动）
 const moveLayerDown = (targetObject) => {
+    console.log('move Down', canvas.value.getObjects())
     if (handler.value && targetObject) {
-        handler.value.bringForward(targetObject)
+        handler.value.sendBackwards(targetObject)
         // 更新图层列表
         updateLayersList()
         // 更新selectIndex以跟随移动的图层
