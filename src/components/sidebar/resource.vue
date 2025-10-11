@@ -348,26 +348,65 @@ watch(
 
 // 升序操作：图层在列表中向上移动（在画布中向后移动）
 const moveLayerUp = (targetObject) => {
-    if (handler.value && targetObject) {
-        handler.value.bringForward(targetObject)
-        // handler.value.sendBackwards(targetObject)
-        console.log('move up', canvas.value.getObjects())
-        // 更新图层列表
-        updateLayersList()
-        // 更新selectIndex以跟随移动的图层
-        updateSelectIndexAfterMove(targetObject)
+    if (handler.value && targetObject && canvas.value) {
+        const objects = canvas.value.getObjects()
+        const currentIndex = objects.indexOf(targetObject)
+
+        // 检查是否可以向上移动
+        const backgroundObjects = objects.filter((obj) => obj.type === 'background')
+        const maxIndex =
+            backgroundObjects.length > 0
+                ? objects.length - backgroundObjects.length - 1
+                : objects.length - 1
+
+        if (currentIndex < maxIndex && currentIndex >= 0) {
+            // 暂时关闭历史记录以避免重复保存
+            canvas.value.offHistory()
+
+            handler.value.bringForward(targetObject)
+            console.log('move up', canvas.value.getObjects())
+
+            // 重新开启历史记录并保存当前状态
+            canvas.value.onHistory()
+
+            // 更新图层列表
+            updateLayersList()
+            // 更新selectIndex以跟随移动的图层
+            updateSelectIndexAfterMove(targetObject)
+        }
     }
 }
 
 // 降序操作：图层在列表中向下移动（在画布中向前移动）
 const moveLayerDown = (targetObject) => {
     console.log('move Down', canvas.value.getObjects())
-    if (handler.value && targetObject) {
-        handler.value.sendBackwards(targetObject)
-        // 更新图层列表
-        updateLayersList()
-        // 更新selectIndex以跟随移动的图层
-        updateSelectIndexAfterMove(targetObject)
+    if (handler.value && targetObject && canvas.value) {
+        const objects = canvas.value.getObjects()
+        const currentIndex = objects.indexOf(targetObject)
+
+        // 找到第一个非工作区对象的索引
+        let minIndex = 0
+        for (let i = 0; i < objects.length; i++) {
+            if (objects[i].type !== 'workarea' && objects[i].type !== 'background') {
+                minIndex = i
+                break
+            }
+        }
+
+        if (currentIndex > minIndex) {
+            // 暂时关闭历史记录以避免重复保存
+            canvas.value.offHistory()
+
+            handler.value.sendBackwards(targetObject)
+
+            // 重新开启历史记录并保存当前状态
+            canvas.value.onHistory()
+
+            // 更新图层列表
+            updateLayersList()
+            // 更新selectIndex以跟随移动的图层
+            updateSelectIndexAfterMove(targetObject)
+        }
     }
 }
 

@@ -344,9 +344,22 @@ class Handler implements HandlerOptions {
     bringForward(createdObj: WorkareaObject) {
         const target = createdObj || this.canvas.getActiveObject()
         if (target) {
-            this.canvas.bringForward(target)
-            // 确保背景图始终在最顶层
-            this.ensureBackgroundOnTop()
+            const objects = this.canvas.getObjects()
+            const currentIndex = objects.indexOf(target)
+            
+            // 检查是否已经是最顶层的非背景对象
+            const backgroundObjects = objects.filter(obj => obj.type === 'background')
+            const maxIndex = backgroundObjects.length > 0 ? objects.length - backgroundObjects.length - 1 : objects.length - 1
+            
+            if (currentIndex < maxIndex) {
+                // 暂时关闭历史记录
+                this.canvas.offHistory()
+                this.canvas.bringForward(target)
+                // 确保背景图始终在最顶层
+                this.ensureBackgroundOnTop()
+                // 重新开启历史记录并保存状态
+                this.canvas.onHistory()
+            }
         }
     }
 
@@ -375,14 +388,28 @@ class Handler implements HandlerOptions {
     sendBackwards(item: WorkareaObject) {
         const target = item || this.canvas.getActiveObject()
         if (target) {
-            // 兼容画布,使画布始终在底部
-            const firstObject = this.canvas.getObjects()[1]
-            if (firstObject.id === target.id) {
-                return
+            const objects = this.canvas.getObjects()
+            const currentIndex = objects.indexOf(target)
+            
+            // 找到第一个非工作区对象的索引
+            let minIndex = 0
+            for (let i = 0; i < objects.length; i++) {
+                if (objects[i].type !== 'workarea' && objects[i].type !== 'background') {
+                    minIndex = i
+                    break
+                }
             }
-            this.canvas.sendBackwards(target)
-            // 确保背景图始终在最顶层
-            this.ensureBackgroundOnTop()
+            
+            // 检查是否已经是最底层的非工作区对象
+            if (currentIndex > minIndex) {
+                // 暂时关闭历史记录
+                this.canvas.offHistory()
+                this.canvas.sendBackwards(target)
+                // 确保背景图始终在最顶层
+                this.ensureBackgroundOnTop()
+                // 重新开启历史记录并保存状态
+                this.canvas.onHistory()
+            }
         }
     }
 
