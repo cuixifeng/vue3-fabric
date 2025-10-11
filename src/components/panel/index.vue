@@ -34,92 +34,10 @@
                                     {{ parseInt(workspace.height) }} px
                                 </div>
                             </div>
-                            <!-- <div class="gda-space-item">
-                <div class="panel-row">
-                  <div class="panel-row__content">
-                    <button
-                      class="right-canvas-resize-btn"
-                      @click="sizeShow = true"
-                    >
-                      调整尺寸
-                    </button>
-                  </div>
-                </div>
-              </div> -->
                         </div>
                     </div>
                 </div>
-                <!-- <div class="panel-block">
-          <div class="panel-block__header">
-            <div class="panel-block__header-title">背景图</div>
-          </div>
-          <div class="panel-block__content">
-            <div class="gda-space-item">
-              <div class="gda-space-item">
-                <div class="panel-row" v-if="!bgObject">
-                  <div class="panel-row__content">
-                    <el-upload
-                      :show-file-list="false"
-                      :auto-upload="false"
-                      :on-change="(e) => uploadImage(e, 'background')"
-                    >
-                      <button class="right-canvas-resize-btn">上传图片</button>
-                    </el-upload>
-                  </div>
-                </div>
-                <div class="panel-row panel-row-bg" v-else>
-                  <div class="panel-row-image">
-                    <img :src="bgObject.src" alt="" v-if="bgObject.src" />
-                    <div class="panel-row__content" v-show="false">
-                      <el-upload
-                        :show-file-list="false"
-                        :auto-upload="false"
-                        :on-change="(e) => uploadImage(e, 'background')"
-                      >
-                        <button class="right-canvas-resize-btn">
-                          上传图片
-                        </button>
-                      </el-upload>
-                    </div>
-                    <div class="background-edit-control__tools">
-                      <el-tooltip
-                        class="item"
-                        effect="dark"
-                        content="翻转"
-                        placement="top"
-                      >
-                        <i
-                          class="iconfont icon-zuoyoufanzhuan"
-                          @click="onflip"
-                        ></i>
-                      </el-tooltip>
-                      <el-tooltip
-                        class="item"
-                        effect="dark"
-                        content="分离图片"
-                        placement="top"
-                      >
-                        <i
-                          class="iconfont icon-zhaopian"
-                          @click="bgToImage"
-                        ></i>
-                      </el-tooltip>
-                      <el-tooltip
-                        class="item"
-                        effect="dark"
-                        content="删除"
-                        placement="top"
-                      >
-                        <i class="iconfont icon-delete" @click="remove"></i>
-                      </el-tooltip>
-                    </div>
-                  </div>
-                  <Opactiy :onChange="onChange" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> -->
+
                 <div class="panel-block">
                     <div class="panel-block__header">
                         <div class="panel-block__header-title">背景色</div>
@@ -147,6 +65,167 @@
                         </div>
                     </div>
                 </div>
+                <div v-if="currentItem && currentItem.type == 'textbox'" class="panel-block">
+                    <div class="panel-block__header">
+                        <div class="panel-block__header-title">文字效果</div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div class="panel-row__label">内容</div>
+                                    <div class="panel-row__content">
+                                        <el-input
+                                            v-model="textarea1"
+                                            style="width: 240px"
+                                            autosize
+                                            type="textarea"
+                                            placeholder="Please input"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div class="panel-row__label">字体大小</div>
+                                    <div class="panel-row__content">
+                                        <el-input
+                                            v-model="fontSize"
+                                            style="width: 240px"
+                                            autosize
+                                            type="number"
+                                            placeholder="Please input"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div class="panel-row__label">阴影效果</div>
+                                    <div class="panel-row__content">
+                                        <Color @select="selectShadow" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div class="panel-row__label">阴影模糊</div>
+                                    <div class="panel-row__content">
+                                        <el-input
+                                            v-model="shadowBlur"
+                                            style="width: 240px"
+                                            type="number"
+                                            placeholder="模糊半径"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div class="panel-row__label">水平偏移</div>
+                                    <div class="panel-row__content">
+                                        <el-input
+                                            v-model="shadowOffsetX"
+                                            style="width: 240px"
+                                            type="number"
+                                            placeholder="水平偏移"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div class="panel-row__label">垂直偏移</div>
+                                    <div class="panel-row__content">
+                                        <el-input
+                                            v-model="shadowOffsetY"
+                                            style="width: 240px"
+                                            type="number"
+                                            placeholder="垂直偏移"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div class="panel-row__label">粗细</div>
+                                    <div class="panel-row__content">
+                                        <el-select
+                                            v-model="fontWeight"
+                                            placeholder="Select"
+                                            style="width: 240px"
+                                        >
+                                            <el-option label="normal" value="normal" />
+                                            <el-option label="bold" value="bold" />
+                                            <el-option label="bolder" value="bolder" />
+                                        </el-select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div class="panel-row__label">斜体</div>
+                                    <div class="panel-row__content">
+                                        <el-select
+                                            v-model="fontStyle"
+                                            placeholder="Select"
+                                            style="width: 240px"
+                                        >
+                                            <el-option label="normal" value="normal" />
+                                            <el-option label="italic" value="italic" />
+                                        </el-select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div class="panel-row__label">间距</div>
+                                    <div class="panel-row__content">
+                                        <el-input
+                                            v-model="charSpacing"
+                                            style="width: 240px"
+                                            autosize
+                                            type="number"
+                                            placeholder="Please input"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <button
                     v-if="currentItem && currentItem.type == 'Image'"
                     class="cutImg"
@@ -170,8 +249,9 @@
     </div>
 </template>
 <script lang="ts">
+import { ElInput, ElSelect, ElOption } from 'element-plus'
 import { panel } from '@/constants/panel'
-import { ref, computed, inject, shallowRef } from 'vue'
+import { ref, computed, inject, shallowRef, watch } from 'vue'
 import { useStore } from 'vuex'
 import Bar from './bar.vue'
 import Cutting from './cutting.vue'
@@ -183,7 +263,10 @@ export default {
         Bar,
         WorkspaceSize,
         Color,
-        Cutting
+        Cutting,
+        ElInput,
+        ElSelect,
+        ElOption
     },
     props: {
         onChange: {
@@ -199,8 +282,18 @@ export default {
         const { state } = useStore()
         const handler = inject('handler')
         const canvas = inject('canvas')
-
+        const textarea1 = ref('在这里输入文字')
+        const fontSize = ref(40)
         const openCut = ref(false)
+        const fontWeight = ref('normal')
+        const fontStyle = ref('normal')
+        const charSpacing = ref(0)
+
+        // 阴影相关数据
+        const shadowBlur = ref(10)
+        const shadowOffsetX = ref(5)
+        const shadowOffsetY = ref(5)
+        const shadowColor = ref('rgba(0, 0, 0, 0.3)')
 
         const popupRef = shallowRef<InstanceType<typeof Cutting>>()
 
@@ -208,6 +301,7 @@ export default {
             return state.workspace
         })
         const currentItem = computed(() => {
+            console.log(state.currentItem, 'currentItem')
             return state.currentItem
         })
         const selectedItem = computed(() => {
@@ -219,8 +313,139 @@ export default {
             }
             return null
         })
+
+        // 监听文字相关属性变化，同步到选中的文字图层
+        const updateTextObject = (property, value) => {
+            const activeObject = canvas.value?.getActiveObject()
+            if (
+                activeObject &&
+                (activeObject.type === 'textbox' ||
+                    activeObject.type === 'FontCustom' ||
+                    activeObject.type === 'text' ||
+                    activeObject.type === 'i-text')
+            ) {
+                if (property === 'text') {
+                    activeObject.set('text', value)
+                } else if (property === 'fontSize') {
+                    activeObject.set('fontSize', parseInt(value) || 40)
+                } else if (property === 'fontWeight') {
+                    activeObject.set('fontWeight', value)
+                } else if (property === 'fontStyle') {
+                    activeObject.set('fontStyle', value)
+                } else if (property === 'charSpacing') {
+                    activeObject.set('charSpacing', parseInt(value) || 0)
+                } else if (property === 'shadow') {
+                    console.log(shadowColor.value, 'shadowColor.value')
+                    // 设置阴影
+                    const shadow = {
+                        color: shadowColor.value,
+                        blur: parseInt(shadowBlur.value) || 10,
+                        offsetX: parseInt(shadowOffsetX.value) || 5,
+                        offsetY: parseInt(shadowOffsetY.value) || 5
+                    }
+
+                    activeObject.set({
+                        shadow: shadow
+                    })
+                }
+
+                activeObject.setCoords()
+                canvas.value.renderAll()
+
+                // 触发选择事件更新状态
+                if (handler.value && handler.value.onSelect) {
+                    handler.value.onSelect(activeObject)
+                }
+            }
+        }
+
+        // 更新阴影的方法
+        const updateShadow = () => {
+            updateTextObject('shadow', null)
+        }
+
+        // 监听文字内容变化
+        watch(textarea1, (newValue) => {
+            updateTextObject('text', newValue)
+        })
+
+        // 监听字体大小变化
+        watch(fontSize, (newValue) => {
+            updateTextObject('fontSize', newValue)
+        })
+
+        // 监听字体粗细变化
+        watch(fontWeight, (newValue) => {
+            updateTextObject('fontWeight', newValue)
+        })
+
+        // 监听字体样式变化
+        watch(fontStyle, (newValue) => {
+            updateTextObject('fontStyle', newValue)
+        })
+
+        // 监听字符间距变化
+        watch(charSpacing, (newValue) => {
+            updateTextObject('charSpacing', newValue)
+        })
+
+        // 监听阴影相关属性变化
+        watch(shadowBlur, () => {
+            updateShadow()
+        })
+
+        watch(shadowOffsetX, () => {
+            updateShadow()
+        })
+
+        watch(shadowOffsetY, () => {
+            updateShadow()
+        })
+
+        // 监听当前选中项变化，更新面板数据
+        watch(
+            currentItem,
+            (newItem) => {
+                if (
+                    newItem &&
+                    (newItem.type === 'textbox' ||
+                        newItem.type === 'FontCustom' ||
+                        newItem.type === 'text' ||
+                        newItem.type === 'i-text')
+                ) {
+                    // 更新面板数据以反映当前选中文字对象的属性
+                    textarea1.value = newItem.text || '在这里输入文字'
+                    fontSize.value = newItem.fontSize || 40
+                    fontWeight.value = newItem.fontWeight || 'normal'
+                    fontStyle.value = newItem.fontStyle || 'normal'
+                    charSpacing.value = newItem.charSpacing || 0
+
+                    // 更新阴影相关数据
+                    if (newItem.shadow) {
+                        shadowColor.value = newItem.shadow.color || 'rgba(0, 0, 0, 0.3)'
+                        shadowBlur.value = newItem.shadow.blur || 10
+                        shadowOffsetX.value = newItem.shadow.offsetX || 5
+                        shadowOffsetY.value = newItem.shadow.offsetY || 5
+                    } else {
+                        shadowColor.value = 'rgba(0, 0, 0, 0.3)'
+                        shadowBlur.value = 10
+                        shadowOffsetX.value = 5
+                        shadowOffsetY.value = 5
+                    }
+                }
+            },
+            { immediate: true }
+        )
+
         function selectColor(value) {
             props.onChange(null, value)
+        }
+        function selectShadow(value) {
+            console.log(value, 'selectShadow')
+            // 设置阴影颜色
+            shadowColor.value = value.fill
+
+            updateShadow()
         }
         async function handleSubmit() {
             popupRef.value?.close()
@@ -241,10 +466,20 @@ export default {
             popupRef.value?.open()
         }
         return {
+            fontStyle,
+            fontWeight,
+            charSpacing,
+            textarea1,
+            fontSize,
+            shadowBlur,
+            shadowOffsetX,
+            shadowOffsetY,
+            shadowColor,
             headtool,
             sizeShow,
             workspace,
             selectColor,
+            selectShadow,
             bgObject,
             colorRound,
             colorShow,

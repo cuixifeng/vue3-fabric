@@ -65,9 +65,10 @@ class EditorWorkspace {
         }
         const workspace = new fabric.Rect(this.option)
         workspace.controls.deleteControl = new fabric.Control({
+            
             x: 0.5,
-            y: -1,
-            offsetY: 16,
+            y: -0.5,
+            offsetY: 0,
             cursorStyle: 'pointer',
             mouseUpHandler: deleteObject as any,
             render: renderIcon

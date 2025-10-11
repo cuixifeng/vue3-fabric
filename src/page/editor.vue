@@ -110,12 +110,13 @@ function onDrap(e) {
 function onAddItem(item) {
     const id = uuidv4()
     const option = Object.assign({}, item.option, { id })
-
+    commit('setCurrentItem', option)
     handler.value.add(option)
 }
 
 function onAdd(target) {
     commit('setActivateItem', target)
+    commit('setCurrentItem', target)
     handler.value.select(target)
 }
 
