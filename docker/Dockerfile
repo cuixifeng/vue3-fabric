@@ -10,7 +10,7 @@ COPY dist/  /home/project/
 
 # 对外暴漏的端口号
 # [注：EXPOSE指令只是声明容器运行时提供的服务端口，给读者看有哪些端口，在运行时只会开启程序自身的端口！！]
-EXPOSE 80
+EXPOSE 8081
 
 # 启动nginx容器
 CMD ["nginx", "-g", "daemon off;"]
