@@ -15,11 +15,11 @@
             </el-tooltip>
             <!-- <div class="logo">vue-design-editor</div> -->
         </div>
-        <div class="starfish-link">
+        <!-- <div class="starfish-link">
             <a href="https://github.com/haixin-fang/vue-design-editor" target="_black">
                 <i class="iconfont icon-GitHub"></i
             ></a>
-        </div>
+        </div> -->
         <popover :dom="menu" :show="guideShow" @close="guideShow = false">
             <template v-slot="{ setSlotRef }">
                 <div :ref="(el) => setSlotRef(el)">

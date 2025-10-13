@@ -2,6 +2,7 @@
     <div class="option-box">
         <button @click="undo">回退</button>
         <button @click="redo">前进</button>
+        <Recorder />
     </div>
     <div
         :style="{ width: '100%', height: '100%' }"
@@ -19,7 +20,7 @@ import { v4 as uuidv4 } from 'uuid'
 import Handler from '@/core/handler'
 import initAligningGuidelines from '@/core/AligningGuidelines'
 import { useStore } from 'vuex'
-
+import Recorder from '@/common/Recorder.vue'
 // 定义 props
 const props = defineProps({
     workareaOption: {
