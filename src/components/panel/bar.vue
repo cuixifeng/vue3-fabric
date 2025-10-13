@@ -81,6 +81,9 @@ export default {
     inject: {
         canvas: {
             from: 'canvas'
+        },
+        handler: {
+            from: 'handler'
         }
     },
     data() {
@@ -104,8 +107,8 @@ export default {
                 const scaledHeight = this.currentItem.height * scaleY
 
                 // 计算居中位置（考虑缩放后的尺寸）
-                const centerLeft = (this.workspace.width - scaledWidth) / 2
-                const centerTop = (this.workspace.height - scaledHeight) / 2
+                const centerLeft = (this.handler.workareaHandler.workspace.width - scaledWidth) / 2
+                const centerTop = (this.handler.workareaHandler.workspace.height - scaledHeight) / 2
 
                 this.currentItem.set({
                     left: centerLeft, // 水平居中

@@ -265,7 +265,6 @@ onMounted(() => {
     // 1. 监听对象添加
     canvas.on('object:added', () => {
         store.commit('setLayers', canvas.getObjects())
-        console.log(canvas.getObjects())
     })
 
     // 2. 监听对象移除

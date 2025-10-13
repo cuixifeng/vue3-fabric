@@ -134,7 +134,7 @@ import { Close } from '@element-plus/icons-vue'
 import { tryOnMounted, useEventListener } from '@vueuse/core'
 // import getFileType from "@/utils/getFileType";
 // import Psd from "@/parse/psd";
-import toJson, { getFileType, types as fileTypes } from 'tojson.js'
+import { getFileType, types as fileTypes } from 'tojson.js'
 const fileList = ref<File[]>([])
 const dragArea = ref()
 const isDrag = ref(false)

@@ -113,6 +113,7 @@ import { useStore } from 'vuex'
 const { state } = useStore()
 const sizeList = ref(size)
 const handler = inject('handler')
+const canvas = inject('canvas')
 const lock = ref(false)
 const unitList = ref([
     {
@@ -177,6 +178,7 @@ function changeSize(size) {
         sizeId: size.id,
         unit: size?.material.unit
     })
+    canvas.value.clear()
     handler.value?.workareaHandler.setSize(
         parseInt(size?.material.width),
         parseInt(size?.material.height)

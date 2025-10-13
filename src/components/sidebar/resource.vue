@@ -392,7 +392,7 @@ const moveLayerDown = (targetObject) => {
                 break
             }
         }
-
+        console.log('minIndex', minIndex, currentIndex)
         if (currentIndex > minIndex) {
             // 暂时关闭历史记录以避免重复保存
             canvas.value.offHistory()
@@ -431,12 +431,12 @@ const updateLayersList = () => {
         store.commit('setLayers', canvas.value.getObjects())
     }
 }
-const deletItem = (target) => {
-    if (selectIndex.value > 0) {
-        canvas.value.remove(target)
-        canvas.value.renderAll()
-    }
-}
+// const deletItem = (target) => {
+//     if (selectIndex.value > 0) {
+//         canvas.value.remove(target)
+//         canvas.value.renderAll()
+//     }
+// }
 
 const icons = computed(() => {
     return state.icons
@@ -489,17 +489,16 @@ function handlerOption(type, itemType) {
             // add the css to the document for those loaded fonts
             document.fonts.add(fontVT323)
             document.fonts.add(fontPacifico)
-            const random = parseInt(Math.random() * 80)
+
             var option = {
-                width: 500,
-                height: 500,
-                fontSize: itemType == 'h1' ? 220 : 180,
+                fontSize: 120,
                 name: '自定义字体',
                 text: 'Hello',
                 type: 'textbox',
                 fontFamily: itemType == 'Aa' ? 'VT323' : itemType == '3D' ? 'Pacifico' : 'Arial',
-                left: workspace.value.left + workspace.value.width / 2 - 150 - random,
-                top: workspace.value.top + workspace.value.height / 2 - 15 - random
+                left:
+                    workspace.value.left + handler.value?.workareaHandler.workspace.width / 2 - 150,
+                top: workspace.value.top + handler.value?.workareaHandler.workspace.height / 2 - 100
             }
             handler.value.add(option)
         })

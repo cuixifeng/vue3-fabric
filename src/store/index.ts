@@ -1,6 +1,5 @@
 import { createStore } from 'vuex'
 import request from '@/service/request'
-import { set } from 'lodash-es'
 
 export default createStore({
     state: {

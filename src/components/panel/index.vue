@@ -27,11 +27,23 @@
                     </div>
                     <div class="panel-block__content">
                         <div class="gda-space-item">
-                            <div class="panel-row">
+                            <!-- <div class="panel-row">
                                 <div class="panel-row__label">尺寸</div>
                                 <div class="panel-row__content" v-if="workspace">
                                     {{ parseInt(workspace.width) }} ×
                                     {{ parseInt(workspace.height) }} px
+                                </div>
+                            </div> -->
+                            <div class="gda-space-item">
+                                <div class="panel-row">
+                                    <div class="panel-row__content">
+                                        <button
+                                            class="right-canvas-resize-btn"
+                                            @click="sizeShow = true"
+                                        >
+                                            调整尺寸
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -61,6 +73,41 @@
                                         </div>
                                     </template>
                                 </popover>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="currentItem" class="panel-block">
+                    <div class="panel-block__header">
+                        <div class="panel-block__header-title">水平方向控制</div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div
+                                        class="panel-row__label"
+                                        style="display: flex; align-items: center"
+                                    >
+                                        <div style="flex: 1">X轴</div>
+                                        <el-switch v-model="X" style="margin-left: 100px" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div
+                                        class="panel-row__label"
+                                        style="display: flex; align-items: center"
+                                    >
+                                        <div style="flex: 1">X轴</div>
+                                        <el-switch v-model="Y" style="margin-left: 100px" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -249,7 +296,7 @@
     </div>
 </template>
 <script lang="ts">
-import { ElInput, ElSelect, ElOption } from 'element-plus'
+import { ElInput, ElSelect, ElOption, ElSwitch } from 'element-plus'
 import { panel } from '@/constants/panel'
 import { ref, computed, inject, shallowRef, watch } from 'vue'
 import { useStore } from 'vuex'
@@ -266,7 +313,8 @@ export default {
         Cutting,
         ElInput,
         ElSelect,
-        ElOption
+        ElOption,
+        ElSwitch
     },
     props: {
         onChange: {
@@ -288,6 +336,8 @@ export default {
         const fontWeight = ref('normal')
         const fontStyle = ref('normal')
         const charSpacing = ref(0)
+        const X = ref(false)
+        const Y = ref(false)
 
         // 阴影相关数据
         const shadowBlur = ref(10)
@@ -314,40 +364,59 @@ export default {
             return null
         })
 
+        // 文字对象属性处理器映射
+        const textPropertyHandlers = {
+            text: (activeObject, value) => {
+                activeObject.set('text', value)
+            },
+            fontSize: (activeObject, value) => {
+                activeObject.set('fontSize', parseInt(value) || 40)
+            },
+            fontWeight: (activeObject, value) => {
+                activeObject.set('fontWeight', value)
+            },
+            fontStyle: (activeObject, value) => {
+                activeObject.set('fontStyle', value)
+            },
+            charSpacing: (activeObject, value) => {
+                activeObject.set('charSpacing', parseInt(value) || 0)
+            },
+            shadow: (activeObject) => {
+                console.log(shadowColor.value, 'shadowColor.value')
+                // 设置阴影
+                const shadow = {
+                    color: shadowColor.value,
+                    blur: parseInt(shadowBlur.value) || 10,
+                    offsetX: parseInt(shadowOffsetX.value) || 5,
+                    offsetY: parseInt(shadowOffsetY.value) || 5
+                }
+                activeObject.set({ shadow })
+            },
+            X: (activeObject, value) => {
+                activeObject.set('lockMovementX', value)
+            },
+            Y: (activeObject, value) => {
+                activeObject.set('lockMovementY', value)
+            }
+        }
+
+        // 检查是否为文字类型对象
+        const isTextObject = (obj) => {
+            const textTypes = ['textbox', 'FontCustom', 'text', 'i-text', 'Image']
+            return obj && textTypes.includes(obj.type)
+        }
+
         // 监听文字相关属性变化，同步到选中的文字图层
         const updateTextObject = (property, value) => {
             const activeObject = canvas.value?.getActiveObject()
-            if (
-                activeObject &&
-                (activeObject.type === 'textbox' ||
-                    activeObject.type === 'FontCustom' ||
-                    activeObject.type === 'text' ||
-                    activeObject.type === 'i-text')
-            ) {
-                if (property === 'text') {
-                    activeObject.set('text', value)
-                } else if (property === 'fontSize') {
-                    activeObject.set('fontSize', parseInt(value) || 40)
-                } else if (property === 'fontWeight') {
-                    activeObject.set('fontWeight', value)
-                } else if (property === 'fontStyle') {
-                    activeObject.set('fontStyle', value)
-                } else if (property === 'charSpacing') {
-                    activeObject.set('charSpacing', parseInt(value) || 0)
-                } else if (property === 'shadow') {
-                    console.log(shadowColor.value, 'shadowColor.value')
-                    // 设置阴影
-                    const shadow = {
-                        color: shadowColor.value,
-                        blur: parseInt(shadowBlur.value) || 10,
-                        offsetX: parseInt(shadowOffsetX.value) || 5,
-                        offsetY: parseInt(shadowOffsetY.value) || 5
-                    }
 
-                    activeObject.set({
-                        shadow: shadow
-                    })
-                }
+            if (!isTextObject(activeObject)) {
+                return
+            }
+
+            const handler = textPropertyHandlers[property]
+            if (handler) {
+                handler(activeObject, value)
 
                 activeObject.setCoords()
                 canvas.value.renderAll()
@@ -364,48 +433,40 @@ export default {
             updateTextObject('shadow', null)
         }
 
-        // 监听文字内容变化
-        watch(textarea1, (newValue) => {
-            updateTextObject('text', newValue)
+        // 统一的watch监听器配置
+        const textWatchConfig = [
+            { ref: X, property: 'X' },
+            { ref: Y, property: 'Y' },
+            { ref: textarea1, property: 'text' },
+            { ref: fontSize, property: 'fontSize' },
+            { ref: fontWeight, property: 'fontWeight' },
+            { ref: fontStyle, property: 'fontStyle' },
+            { ref: charSpacing, property: 'charSpacing' }
+        ]
+
+        // 阴影相关属性监听配置
+        const shadowWatchRefs = [shadowBlur, shadowOffsetX, shadowOffsetY]
+
+        // 批量创建文字属性监听器
+        textWatchConfig.forEach(({ ref, property }) => {
+            watch(ref, (newValue) => {
+                updateTextObject(property, newValue)
+            })
         })
 
-        // 监听字体大小变化
-        watch(fontSize, (newValue) => {
-            updateTextObject('fontSize', newValue)
-        })
-
-        // 监听字体粗细变化
-        watch(fontWeight, (newValue) => {
-            updateTextObject('fontWeight', newValue)
-        })
-
-        // 监听字体样式变化
-        watch(fontStyle, (newValue) => {
-            updateTextObject('fontStyle', newValue)
-        })
-
-        // 监听字符间距变化
-        watch(charSpacing, (newValue) => {
-            updateTextObject('charSpacing', newValue)
-        })
-
-        // 监听阴影相关属性变化
-        watch(shadowBlur, () => {
-            updateShadow()
-        })
-
-        watch(shadowOffsetX, () => {
-            updateShadow()
-        })
-
-        watch(shadowOffsetY, () => {
-            updateShadow()
+        // 批量创建阴影属性监听器
+        shadowWatchRefs.forEach((shadowRef) => {
+            watch(shadowRef, updateShadow)
         })
 
         // 监听当前选中项变化，更新面板数据
         watch(
             currentItem,
             (newItem) => {
+                if (newItem) {
+                    X.value = newItem.lockMovementX || false
+                    Y.value = newItem.lockMovementY || false
+                }
                 if (
                     newItem &&
                     (newItem.type === 'textbox' ||
@@ -466,6 +527,8 @@ export default {
             popupRef.value?.open()
         }
         return {
+            X,
+            Y,
             fontStyle,
             fontWeight,
             charSpacing,
@@ -745,7 +808,7 @@ export default {
                                 }
                             }
                             .panel-row__label {
-                                width: 80px;
+                                min-width: 80px;
                                 font: var(--text-p1-regular);
                                 color: var(--text-color-secondary);
                             }

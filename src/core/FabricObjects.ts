@@ -116,7 +116,6 @@ fabric.Canvas.prototype.redo = function (callback) {
 
 fabric.Canvas.prototype._loadHistory = function (history, event, callback) {
     const that = this
-    console.log(history, '渲染')
     this.loadFromJSON(history, function () {
         that.renderAll()
         that.fire(event)
