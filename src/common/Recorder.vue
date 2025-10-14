@@ -47,7 +47,7 @@ const openReplayPage = () => {
     } catch (e) {
         console.error('写入回放事件失败:', e)
     }
-    const url = `${window.location.origin}/#/replay`
+    const url = `${window.location.origin}/replay`
     const newWindow = window.open(url, '_blank')
 
     if (newWindow) {

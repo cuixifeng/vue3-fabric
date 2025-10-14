@@ -11,11 +11,25 @@
         :id="id"
     >
         <canvas :id="`canvas_${id}`"></canvas>
+        <div
+            v-if="ClickMenuState"
+            :style="{ left: left + 'px', top: top + 'px' }"
+            id="rightClickMenu"
+            class="custom-menu"
+        >
+            <div class="menu-item" @click="copy">复制<i class="iconfont icon-fuzhi"></i></div>
+            <div class="menu-item" @click="lock">
+                {{ lockState ? '解锁图层' : '锁定图层' }}
+            </div>
+            <div class="menu-item" @click.stop="handleFlip">
+                居中 <i class="iconfont icon-zuoyoufanzhuan"></i>
+            </div>
+        </div>
     </div>
 </template>
 <script setup>
 import { fabric } from 'fabric'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import Handler from '@/core/handler'
 import initAligningGuidelines from '@/core/AligningGuidelines'
@@ -60,12 +74,18 @@ const props = defineProps({
 
 const scrollWidth = 12
 
+const ClickMenuState = ref(false)
 const id = ref(uuidv4())
 // 禁止把画布设置成响应式,否则缩放和旋转功能失效
 let canvas
 const parentCanvas = ref()
 const handler = ref()
 const store = useStore()
+
+const left = ref(0)
+const top = ref(0)
+const lockState = ref(false)
+let clickedObject
 
 onMounted(() => {
     // 获取容器尺寸
@@ -102,7 +122,9 @@ onMounted(() => {
         // 高质量渲染设置
         allowTouchScrolling: false,
         centeredScaling: false,
-        centeredRotation: true
+        centeredRotation: true,
+        fireRightClick: true, // 启用右键点击事件检测，此时button值为3[1,2,4,6](@ref)
+        stopContextMenu: true // 禁止浏览器的默认右键菜单[1,2,4,6](@ref)
     }
 
     // 全局优化Fabric对象渲染 - 在创建画布前设置
@@ -233,13 +255,24 @@ onMounted(() => {
     }
     // 鼠标按下事件：只在工作区外部点击时启用拖拽
     canvas.on('mouse:down', (opt) => {
+        console.log(opt.button, opt.pointer.x, opt.pointer.y, opt.target)
         const evt = opt.e
+        if (opt.button == 3 && opt.target && opt.target.id !== 'workarea') {
+            ClickMenuState.value = true
+            left.value = opt.pointer.x
+            top.value = opt.pointer.y
+        }
         // 检查是否点击了某个对象
         if (opt.target) {
-            const clickedObject = opt.target
+            clickedObject = opt.target
             store.commit('setCurrentItem', clickedObject)
+            // 同步锁定状态
+            if (clickedObject.lockMovementX !== undefined) {
+                lockState.value = clickedObject.lockMovementX
+            }
         } else {
             console.log('点击的是空白区域')
+            ClickMenuState.value = false
         }
         // 检查是否在工作区内
         const isInWorkspace = isMouseInWorkspace(evt)
@@ -305,6 +338,43 @@ onMounted(() => {
         }
     }
 
+    // 完全禁用浏览器的右键菜单
+    const preventContextMenu = (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        return false
+    }
+
+    // 在canvas元素和父容器上添加右键菜单禁用
+    canvasElement.addEventListener('contextmenu', preventContextMenu)
+    parentCanvas.value.addEventListener('contextmenu', preventContextMenu)
+
+    // 添加全局点击事件来隐藏自定义右键菜单
+    const hideCustomMenu = (e) => {
+        // 如果点击的不是自定义菜单，则隐藏菜单
+        if (!e.target.closest('#rightClickMenu')) {
+            ClickMenuState.value = false
+        }
+    }
+
+    document.addEventListener('click', hideCustomMenu)
+    document.addEventListener('contextmenu', hideCustomMenu)
+
+    // 组件卸载时清理事件监听器
+    const cleanup = () => {
+        canvasElement.removeEventListener('contextmenu', preventContextMenu)
+        // parentCanvas.value.removeEventListener('contextmenu', preventContextMenu)
+        document.removeEventListener('click', hideCustomMenu)
+        document.removeEventListener('contextmenu', hideCustomMenu)
+        document.removeEventListener('mousemove', handleMouseMove)
+        document.removeEventListener('mouseup', handleMouseUp)
+    }
+
+    // 在组件卸载时清理
+    onUnmounted(() => {
+        cleanup()
+    })
+
     // 渲染画布
     canvas.renderAll()
 })
@@ -322,6 +392,86 @@ function redo() {
     }
 }
 
+function handleFlip() {
+    console.log(clickedObject)
+    if (clickedObject) {
+        // 获取当前图层的缩放比例
+        const scaleX = clickedObject.scaleX || 1
+        const scaleY = clickedObject.scaleY || 1
+
+        // 计算缩放后的实际尺寸
+        const scaledWidth = clickedObject.width * scaleX
+        const scaledHeight = clickedObject.height * scaleY
+
+        // 计算居中位置（考虑缩放后的尺寸）
+        const centerLeft = (handler.value.workareaHandler.workspace.width - scaledWidth) / 2
+        const centerTop = (handler.value.workareaHandler.workspace.height - scaledHeight) / 2
+
+        clickedObject.set({
+            left: centerLeft, // 水平居中
+            top: centerTop // 垂直居中
+        })
+
+        // 更新对象坐标
+        clickedObject.setCoords()
+        canvas.renderAll()
+        ClickMenuState.value = false
+    }
+}
+
+function copy() {
+    if (clickedObject) {
+        clickedObject.clone(function (clonedObj) {
+            // 调整新对象的位置（向右下方偏移 20px）
+            clonedObj.set({
+                left: clonedObj.left + 20,
+                top: clonedObj.top + 20
+            })
+
+            // 添加到画布
+            canvas.add(clonedObj)
+            canvas.renderAll()
+            ClickMenuState.value = false
+        })
+    }
+}
+
+function lock() {
+    console.log('锁定操作:', clickedObject)
+    if (clickedObject && clickedObject.id !== 'workarea') {
+        try {
+            // 获取当前锁定状态
+            const isCurrentlyLocked = clickedObject.lockMovementX || false
+            const newLockState = !isCurrentlyLocked
+
+            // 设置完整的锁定属性
+            clickedObject.set({
+                lockMovementX: newLockState, // 锁定X轴移动
+                lockMovementY: newLockState // 锁定Y轴移动
+            })
+
+            // 更新UI状态
+            lockState.value = newLockState
+
+            // 重新渲染画布以更新控制点显示
+            canvas.renderAll()
+
+            // 先清空currentItem，然后重新设置以强制触发watch
+            store.commit('setCurrentItem', null)
+            // 使用nextTick确保状态更新后再设置新值
+            nextTick(() => {
+                store.commit('setCurrentItem', clickedObject)
+            })
+        } catch (error) {
+            console.error('锁定操作失败:', error)
+        }
+
+        // 关闭右键菜单
+        ClickMenuState.value = false
+    } else {
+        console.warn('没有选中的对象或对象不可锁定')
+    }
+}
 // 暴露给模板使用的变量和方法
 defineExpose({
     id,
@@ -334,6 +484,7 @@ defineExpose({
 
 <style>
 .parentCanvas {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -369,5 +520,32 @@ defineExpose({
     border: none;
     border-radius: 4px;
     cursor: pointer;
+}
+.custom-menu {
+    position: absolute;
+    z-index: 1000;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    padding: 4px 0;
+}
+.menu-item {
+    padding: 8px 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+.menu-item i {
+    margin-left: auto;
+    font-size: 16px;
+}
+.menu-item:hover {
+    background-color: #f5f5f5;
+}
+.menu-item:last-child {
+    border-bottom: none;
 }
 </style>

@@ -1,24 +1,5 @@
 <template>
     <div class="editor-props-panel">
-        <div class="tab-panel-header">
-            <div class="tab-panel-block__header">
-                <div
-                    v-for="panelItem in headtool"
-                    :key="panelItem.text"
-                    @click="selectTabs(panelItem)"
-                    v-show="onTabShow(panelItem)"
-                >
-                    <button class="tab-button">
-                        <div class="tab-content" :class="getActiveClass(panelItem)">
-                            {{ panelItem.text }}
-                        </div>
-                    </button>
-                </div>
-            </div>
-            <div class="tab-panel-bloack_content" v-if="selectedItem">
-                <Bar />
-            </div>
-        </div>
         <div class="tab-panel">
             <div class="tab-scrollbar__container">
                 <div class="panel-block">
@@ -77,7 +58,7 @@
                         </div>
                     </div>
                 </div>
-                <div v-if="currentItem" class="panel-block">
+                <div v-if="currentItem && currentItem.id != 'workarea'" class="panel-block">
                     <div class="panel-block__header">
                         <div class="panel-block__header-title">水平方向控制</div>
                     </div>
@@ -104,7 +85,7 @@
                                         class="panel-row__label"
                                         style="display: flex; align-items: center"
                                     >
-                                        <div style="flex: 1">X轴</div>
+                                        <div style="flex: 1">Y轴</div>
                                         <el-switch v-model="Y" style="margin-left: 100px" />
                                     </div>
                                 </div>
@@ -300,14 +281,12 @@ import { ElInput, ElSelect, ElOption, ElSwitch } from 'element-plus'
 import { panel } from '@/constants/panel'
 import { ref, computed, inject, shallowRef, watch } from 'vue'
 import { useStore } from 'vuex'
-import Bar from './bar.vue'
 import Cutting from './cutting.vue'
 import WorkspaceSize from './workspace-size.vue'
 // const Color = () => import("./color.vue");
 import Color from './color.vue'
 export default {
     components: {
-        Bar,
         WorkspaceSize,
         Color,
         Cutting,
@@ -495,7 +474,7 @@ export default {
                     }
                 }
             },
-            { immediate: true }
+            { immediate: true, deep: true }
         )
 
         function selectColor(value) {

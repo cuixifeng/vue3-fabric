@@ -1,60 +1,11 @@
 <template>
-    <div class="bar">
-        <!-- <div class="func-content" v-show="isTip">
-            <el-tooltip
-                class="item"
-                effect="dark"
-                content="图层顺序"
-                placement="top"
-                :disabled="islocked"
-            >
-                <i class="iconfont icon-cengji" @click.stop="onLayerShow"></i>
-            </el-tooltip>
-        </div> -->
-        <div class="func-content" v-show="isTip">
-            <el-tooltip
-                class="item"
-                effect="dark"
-                content="翻转"
-                placement="top"
-                :disabled="islocked"
-            >
-                <i class="iconfont icon-zuoyoufanzhuan" @click.stop="handleFlip"></i>
-            </el-tooltip>
-        </div>
-        <div class="func-content" v-show="isTip">
-            <Checkbox
-                :className="'iconfont icon-unlock'"
-                :activeName="'icon-suoding_huaban'"
-                content="锁定图层"
-                :initValue="locked"
-                typeKey="locked"
-                effect="dark"
-                placement="top"
-                @change="myCheck"
-            />
-        </div>
-        <div class="func-content" v-show="isTip">
-            <el-tooltip
-                class="item"
-                effect="dark"
-                content="创建副本"
-                placement="top"
-                :disabled="islocked"
-            >
-                <i class="iconfont icon-fuzhi" @click="copy"></i>
-            </el-tooltip>
-        </div>
-    </div>
+    <div class="bar"></div>
 </template>
 <script>
-import Checkbox from './checkbox.vue'
 import { mapState } from 'vuex'
 
 export default {
-    components: {
-        Checkbox
-    },
+    components: {},
     props: {
         onChange: {
             type: Function
@@ -94,60 +45,8 @@ export default {
     },
 
     methods: {
-        handleFlip() {
-            const canvas = this.canvas
-            console.log(this.workspace, 'workspace')
-            if (this.currentItem) {
-                // 获取当前图层的缩放比例
-                const scaleX = this.currentItem.scaleX || 1
-                const scaleY = this.currentItem.scaleY || 1
-
-                // 计算缩放后的实际尺寸
-                const scaledWidth = this.currentItem.width * scaleX
-                const scaledHeight = this.currentItem.height * scaleY
-
-                // 计算居中位置（考虑缩放后的尺寸）
-                const centerLeft = (this.handler.workareaHandler.workspace.width - scaledWidth) / 2
-                const centerTop = (this.handler.workareaHandler.workspace.height - scaledHeight) / 2
-
-                this.currentItem.set({
-                    left: centerLeft, // 水平居中
-                    top: centerTop // 垂直居中
-                })
-
-                // 更新对象坐标
-                this.currentItem.setCoords()
-                canvas.renderAll()
-            }
-        },
-        myCheck() {
-            if (this.currentItem) {
-                this.currentItem.set({
-                    lockMovementX: !this.currentItem.lockMovementX,
-                    lockMovementY: !this.currentItem.lockMovementY
-                    // this.locked = this.currentItem.lockMovementX
-                })
-            }
-        },
         getBarShow(type) {
             return this.barShow.includes(type)
-        },
-        copy() {
-            const canvas = this.canvas
-            if (this.currentItem) {
-                this.currentItem.clone(function (clonedObj) {
-                    // 调整新对象的位置（向右下方偏移 20px）
-                    clonedObj.set({
-                        left: clonedObj.left + 20,
-                        top: clonedObj.top + 20
-                    })
-
-                    // 添加到画布
-                    canvas.add(clonedObj)
-                    canvas.renderAll()
-                    console.log('对象已复制:', clonedObj)
-                })
-            }
         },
         handleDelete() {
             const canvas = this.canvas
