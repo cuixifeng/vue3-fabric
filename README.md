@@ -2,6 +2,8 @@
 
 `fabric.js and Vue3 based image editor, can customize fonts, materials, design templates.`
 
+## [预览](http://47.104.0.129/)
+
 ## 功能
 
 - 图片编辑✅

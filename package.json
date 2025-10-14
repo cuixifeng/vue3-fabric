@@ -2,7 +2,7 @@
   "name": "vue-design-editor",
   "version": "0.1.0",
   "private": true,
-  "description": "基于fabric.js和Vue的图片、视频编辑器",
+  "description": "基于fabric.js和Vue的图片编辑器",
   "keywords": [
     "fabric.js",
     "vue",
