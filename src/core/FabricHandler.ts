@@ -115,6 +115,20 @@ class FabricHandler {
             }
         })
     }
+    initializeFilters(image: any) {
+        image.filters.push(
+            new fabric.Image.filters.Brightness(),
+            new fabric.Image.filters.Contrast(),
+            new fabric.Image.filters.Saturation(),
+            new fabric.Image.filters.HueRotation(),
+            // new fabric.Image.filters.Vibrance(),
+            // new fabric.Image.filters.Gamma(),
+            new fabric.Image.filters.Blur(),
+            new fabric.Image.filters.Noise(),
+            new fabric.Image.filters.Pixelate()
+        )
+    
+    }
 
     async addImage(obj: FabricImage) {
         const { src, disableAutoScale, imageSmoothing, ...otherOption } = obj
@@ -165,16 +179,7 @@ class FabricHandler {
         
 
         canvasImage.crossOrigin = 'Anonymous'
-
-        // 设置高质量渲染属性
-        canvasImage.set({
-            // 确保图片以最高质量渲染
-            dirty: true,
-            // 禁用自动缓存以保证质量
-            objectCaching: false,
-            // 启用像素级精确渲染
-            perPixelTargetFind: true
-        })
+        this.initializeFilters(canvasImage)
 
         // 等待图片加载并设置
         await this.handler.setImage(canvasImage, src)
