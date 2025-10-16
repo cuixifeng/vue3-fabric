@@ -76,72 +76,9 @@ class UtilsHandler {
     }
 
     fileUpload = async (file: File, name: string, type: string) => {
-        // 获取设备像素比以支持高DPI显示
-        const devicePixelRatio = window.devicePixelRatio || 1
-
-        // 创建高质量图片处理函数
-        const createHighQualityImage = (originalFile: File): Promise<string> => {
-            return new Promise((resolve, reject) => {
-                const image = new Image()
-                const url = URL.createObjectURL(originalFile)
-
-                image.crossOrigin = 'Anonymous'
-
-                image.onload = () => {
-                    // 创建临时canvas来处理高DPI图片
-                    const tempCanvas = document.createElement('canvas')
-                    const tempCtx = tempCanvas.getContext('2d')
-
-                    if (tempCtx) {
-                        // 设置canvas尺寸为图片的实际尺寸乘以设备像素比
-                        const actualWidth = image.naturalWidth
-                        const actualHeight = image.naturalHeight
-
-                        tempCanvas.width = actualWidth * devicePixelRatio
-                        tempCanvas.height = actualHeight * devicePixelRatio
-                        tempCanvas.style.width = actualWidth + 'px'
-                        tempCanvas.style.height = actualHeight + 'px'
-
-                        // 设置高质量渲染上下文
-                        tempCtx.imageSmoothingEnabled = true
-                        tempCtx.imageSmoothingQuality = 'high'
-                        tempCtx.scale(devicePixelRatio, devicePixelRatio)
-
-                        // 绘制图片到临时canvas
-                        tempCtx.drawImage(image, 0, 0, actualWidth, actualHeight)
-
-                        // 将处理后的图片转换为高质量的blob URL
-                        tempCanvas.toBlob(
-                            (blob) => {
-                                URL.revokeObjectURL(url)
-                                if (blob) {
-                                    const highQualityUrl = URL.createObjectURL(blob)
-                                    resolve(highQualityUrl)
-                                } else {
-                                    reject(new Error('无法创建高质量图片blob'))
-                                }
-                            },
-                            'image/png',
-                            1.0
-                        ) // 使用最高质量
-                    } else {
-                        URL.revokeObjectURL(url)
-                        reject(new Error('无法创建2D渲染上下文'))
-                    }
-                }
-
-                image.onerror = () => {
-                    URL.revokeObjectURL(url)
-                    reject(new Error('图片加载失败'))
-                }
-
-                image.src = url
-            })
-        }
-
         try {
-            // 创建高质量图片URL
-            const src = await createHighQualityImage(file)
+            // 直接使用base64格式，避免blob URL的问题
+            const src = await this.fileToBase64(file)
 
             const image = new Image()
             image.crossOrigin = 'Anonymous'
@@ -166,7 +103,7 @@ class UtilsHandler {
                     resolve(true)
                 }
                 image.onerror = () => {
-                    console.error('高质量图片加载失败')
+                    console.error('图片加载失败')
                     resolve(false)
                 }
             })
@@ -179,53 +116,10 @@ class UtilsHandler {
                 marterialObject = await this.handler.add(options)
             }
 
-            // 延迟释放 URL 对象，确保 Fabric.js 有足够时间加载图片
-            setTimeout(() => {
-                URL.revokeObjectURL(src)
-            }, 3000) // 增加延迟时间确保高质量图片加载完成
-
             return marterialObject
         } catch (error) {
             console.error('文件上传处理失败:', error)
-            // 如果高质量处理失败，回退到原始方法
-            const src = URL.createObjectURL(file)
-            const options: any = {
-                name,
-                type,
-                src,
-                imageSmoothing: false,
-                preserveAspectRatio: true,
-                disableAutoScale: true
-            }
-
-            const image = new Image()
-            image.crossOrigin = 'Anonymous'
-            image.src = src
-
-            await new Promise((resolve) => {
-                image.onload = () => {
-                    options.width = image.naturalWidth || image.width
-                    options.height = image.naturalHeight || image.height
-                    resolve(true)
-                }
-                image.onerror = () => {
-                    console.error('图片加载失败')
-                    resolve(false)
-                }
-            })
-
-            let marterialObject
-            if (type == 'background') {
-                marterialObject = await this.handler.workareaHandler.setBgImage(options)
-            } else {
-                marterialObject = await this.handler.add(options)
-            }
-
-            setTimeout(() => {
-                URL.revokeObjectURL(src)
-            }, 2000)
-
-            return marterialObject
+            return null
         }
     }
 

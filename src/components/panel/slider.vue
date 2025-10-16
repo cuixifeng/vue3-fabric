@@ -151,7 +151,6 @@ export default {
             }
         },
         getValue(value) {
-            console.log('888', value)
             if (!value) return 0
             if (this.precentage) {
                 return value * 100

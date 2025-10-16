@@ -18,7 +18,7 @@
                                     v-if="list.type == 'image'"
                                     :show-file-list="false"
                                     :auto-upload="false"
-                                    :on-change="(e) => uploadImage(e, 'background')"
+                                    :on-change="(e) => uploadImage(e, 'Image')"
                                 >
                                     <div class="img-icon">
                                         <img :src="item.icon" alt="" />
