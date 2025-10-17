@@ -116,18 +116,64 @@ class FabricHandler {
         })
     }
     initializeFilters(image: any) {
-        image.filters.push(
-            new fabric.Image.filters.Brightness(),
-            new fabric.Image.filters.Contrast(),
-            new fabric.Image.filters.Saturation(),
-            new fabric.Image.filters.HueRotation(),
-            // new fabric.Image.filters.Vibrance(),
-            // new fabric.Image.filters.Gamma(),
-            new fabric.Image.filters.Blur(),
-            new fabric.Image.filters.Noise(),
-            new fabric.Image.filters.Pixelate()
-        )
-    
+        try {
+            // 确保filters属性存在
+            if (!image.filters) {
+                image.filters = []
+            }
+
+            // 如果是从JSON导入且有滤镜数据，需要重新实例化
+            if (Array.isArray(image.filters) && image.filters.length > 0) {
+                const validFilters = []
+                
+                for (const filter of image.filters) {
+                    // 检查是否已经是正确的滤镜实例
+                    if (filter && typeof filter.isNeutralState === 'function') {
+                        validFilters.push(filter)
+                        continue
+                    }
+                    
+                    // 如果是普通对象，尝试重新创建滤镜实例
+                    if (filter && typeof filter === 'object' && filter.type) {
+                        const FilterClass = fabric.Image.filters[filter.type]
+                        if (FilterClass) {
+                            try {
+                                // 创建新的滤镜实例，传入原有配置
+                                const filterConfig = { ...filter }
+                                delete filterConfig.type // 移除type属性，避免冲突
+                                const newFilter = new FilterClass(filterConfig)
+                                validFilters.push(newFilter)
+                            } catch (e) {
+                                console.warn(`Failed to recreate filter ${filter.type}:`, e)
+                            }
+                        }
+                    }
+                }
+                
+                // 更新滤镜数组
+                image.filters = validFilters
+            }
+
+            // 如果没有任何滤镜，添加默认的空滤镜（用于后续编辑）
+            if (image.filters.length === 0) {
+                // 只在非导入状态下添加默认滤镜
+                if (!this.handler.isimporting) {
+                    image.filters = [
+                        new fabric.Image.filters.Brightness({ brightness: 0 }),
+                        new fabric.Image.filters.Contrast({ contrast: 0 }),
+                        new fabric.Image.filters.Saturation({ saturation: 0 }),
+                        new fabric.Image.filters.HueRotation({ rotation: 0 }),
+                        new fabric.Image.filters.Blur({ blur: 0 }),
+                        new fabric.Image.filters.Noise({ noise: 0 }),
+                        new fabric.Image.filters.Pixelate({ blocksize: 1 })
+                    ]
+                }
+            }
+        } catch (e) {
+            console.error('Error initializing filters:', e)
+            // 如果出错，确保至少有一个空的滤镜数组
+            image.filters = []
+        }
     }
 
     async addImage(obj: FabricImage) {
@@ -177,12 +223,26 @@ class FabricHandler {
         // 创建Fabric图片对象
         const canvasImage = new fabric.Image(imageUrl, imageOptions)
         
-
         canvasImage.crossOrigin = 'Anonymous'
-        this.initializeFilters(canvasImage)
+        
+        // 在导入时延迟初始化滤镜，避免冲突
+        if (!this.handler.isimporting) {
+            // 正常创建时初始化滤镜
+            this.initializeFilters(canvasImage)
+        } else {
+            // 导入时确保滤镜数组存在但不立即初始化
+            if (!canvasImage.filters) {
+                canvasImage.filters = []
+            }
+        }
 
         // 等待图片加载并设置
         await this.handler.setImage(canvasImage, src)
+        
+        // 如果是导入状态，在图片加载完成后再初始化滤镜
+        if (this.handler.isimporting) {
+            this.initializeFilters(canvasImage)
+        }
 
         // 图片加载完成后，重新设置高质量渲染属性
         canvasImage.set({

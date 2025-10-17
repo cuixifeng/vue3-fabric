@@ -478,7 +478,7 @@ class Handler implements HandlerOptions {
         const { width, height, left, top } = this.workareaHandler.workspace as any
         const image = this.canvas.toDataURL({
             format: type || 'png',
-            quality: quality / 100 || 1,
+            quality: 0.9,
             width,
             height,
             left,
@@ -663,7 +663,45 @@ class Handler implements HandlerOptions {
                     obj.id = uuid()
                 }
                 console.log(obj,'obj')
-                await this.add(obj, true)
+                // 特殊处理图像对象
+                if (obj.type === 'Image') {
+                    // 确保滤镜数据格式正确
+                    if (obj.filters) {
+                        if (!Array.isArray(obj.filters)) {
+                            obj.filters = []
+                        }
+                        // 清理无效的滤镜数据，但保留有效的滤镜配置
+                        obj.filters = obj.filters.filter(filter => 
+                            filter && typeof filter === 'object'
+                        )
+                    } else {
+                        obj.filters = []
+                    }
+                    
+                    // 确保图像有必要的属性
+                    if (!obj.crossOrigin) {
+                        obj.crossOrigin = 'anonymous'
+                    }
+                }
+                
+                try {
+                    await this.add(obj, true)
+                } catch (error) {
+                    console.error(`Failed to add object ${obj.id}:`, error)
+                    // 如果添加失败，尝试创建一个简化版本
+                    if (obj.type === 'Image') {
+                        try {
+                            const simplifiedObj = {
+                                ...obj,
+                                filters: [], // 清空滤镜
+                                crossOrigin: 'anonymous'
+                            }
+                            await this.add(simplifiedObj, true)
+                        } catch (fallbackError) {
+                            console.error(`Failed to add simplified object ${obj.id}:`, fallbackError)
+                        }
+                    }
+                }
             }
             this.canvas.renderAll()
         } catch (e) {
