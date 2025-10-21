@@ -29,7 +29,7 @@
 import { useStore } from 'vuex'
 import { fabric } from 'fabric'
 import { ElDialog, ElButton } from 'element-plus'
-import { defineProps, withDefaults, ref, provide, nextTick, inject, computed } from 'vue'
+import { withDefaults, ref, provide, nextTick, inject, computed } from 'vue'
 const props = withDefaults(
     defineProps<{
         // 弹窗标题

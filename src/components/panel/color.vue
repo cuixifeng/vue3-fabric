@@ -12,7 +12,7 @@
 <script setup>
 import { ColorPicker } from 'colorpickers'
 import 'colorpickers/style.css'
-import { defineProps, defineEmits } from 'vue'
+// import { defineProps } from 'vue'
 const emit = defineEmits(['select'])
 defineProps({
     useType: { type: String, default: 'both' },
