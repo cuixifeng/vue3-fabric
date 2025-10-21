@@ -181,105 +181,60 @@
             </Waterifall>
         </div>
         <div class="Img" v-if="activeModule.type == 'Img'">
-            <div
-                @click="selectlayer(index + 1, item)"
-                :class="['layer', selectIndex === index + 1 ? 'active' : '']"
-                v-for="(item, index) in state.alllayers.slice(1)"
-                :key="item.id"
+            <draggable
+                v-model="layersList"
+                @end="onDragEnd"
+                item-key="id"
+                :animation="200"
+                ghost-class="ghost"
+                chosen-class="chosen"
+                drag-class="drag"
             >
-                <div v-if="item.type != 'textbox'" class="image">
-                    <img :src="item.src" alt="layer" />
-                </div>
-                <div class="text" v-else>
-                    {{ item.text }}
-                </div>
-                <div v-if="selectIndex === index + 1" class="del" @click.stop="moveLayerDown(item)">
-                    <svg
-                        width="1.2em"
-                        height="1.2em"
-                        xmlns="http://www.w3.org/2000/svg"
-                        xmlns:xlink="http://www.w3.org/1999/xlink"
-                        viewBox="0 0 23.76 29.241"
-                        class="icon"
+                <template #item="{ element: item, index }">
+                    <div
+                        @click="selectlayer(index + 1, item)"
+                        :class="['layer', selectIndex === index + 1 ? 'active' : '']"
+                        :key="item.id"
                     >
-                        <g class="b">
-                            <path
-                                fill="currentColor"
-                                d="M5.286,19.191a1.154,1.154,0,1,0,1.632,1.632l3.8-3.8V28.087a1.154,1.154,0,0,0,2.308,0V17.022l3.8,3.8a1.154,1.154,0,1,0,1.632-1.632L12.689,13.42a1.153,1.153,0,0,0-1.632,0Z"
-                            ></path>
-                            <path
-                                fill="#fff"
-                                stroke="currentColor"
-                                stroke-miterlimit="10"
-                                stroke-width="2"
-                                d="M22.76,2.793v4.5a1.793,1.793,0,0,1-1.793,1.793H2.793A1.793,1.793,0,0,1,1,7.289v-4.5A1.793,1.793,0,0,1,2.793,1H20.967A1.793,1.793,0,0,1,22.76,2.793"
-                            ></path>
-                            <rect
-                                fill="currentColor"
-                                width="21.76"
-                                height="8.082"
-                                rx="1.793"
-                                transform="translate(1 1)"
-                            ></rect>
-                        </g>
-                    </svg>
-                </div>
-                <div v-if="selectIndex === index + 1" class="del" @click.stop="moveLayerUp(item)">
-                    <svg
-                        width="1.2em"
-                        height="1.2em"
-                        xmlns="http://www.w3.org/2000/svg"
-                        xmlns:xlink="http://www.w3.org/1999/xlink"
-                        viewBox="0 0 23.76 29.241"
-                        class="icon"
-                    >
-                        <g class="b">
-                            <path
-                                fill="currentColor"
-                                d="M18.473,10.05a1.154,1.154,0,1,0-1.632-1.632l-3.8,3.8V1.154a1.154,1.154,0,1,0-2.308,0V12.219l-3.8-3.8A1.154,1.154,0,0,0,5.3,10.05l5.771,5.771a1.153,1.153,0,0,0,1.632,0Z"
-                            ></path>
-                            <path
-                                fill="#fff"
-                                stroke="currentColor"
-                                stroke-miterlimit="10"
-                                stroke-width="2"
-                                d="M1,26.448v-4.5a1.793,1.793,0,0,1,1.793-1.793H20.967a1.793,1.793,0,0,1,1.793,1.793v4.5a1.793,1.793,0,0,1-1.793,1.793H2.793A1.793,1.793,0,0,1,1,26.448"
-                            ></path>
-                            <rect
-                                fill="currentColor"
-                                width="21.76"
-                                height="8.082"
-                                rx="1.793"
-                                transform="translate(1 20.159)"
-                            ></rect>
-                        </g>
-                    </svg>
-                </div>
-                <!-- <div @click="deletItem(item)" class="del">
-                    <svg
-                        width="1.2em"
-                        height="1.2em"
-                        xmlns="http://www.w3.org/2000/svg"
-                        xmlns:xlink="http://www.w3.org/1999/xlink"
-                        viewBox="0 0 23.8 28"
-                        class="icon"
-                    >
-                        <g fill="currentColor">
-                            <g class="b" transform="translate(0 0)">
-                                <path
-                                    class="c"
-                                    d="M14.155,2.1a.7.7,0,0,1,.686.563L15.289,4.9H8.511l.447-2.237A.7.7,0,0,1,9.645,2.1ZM17.43,4.9,16.9,2.251A2.8,2.8,0,0,0,14.155,0H9.645A2.8,2.8,0,0,0,6.9,2.251L6.37,4.9H1.05a1.05,1.05,0,1,0,0,2.1h.9L3.626,24.206A4.2,4.2,0,0,0,7.806,28h8.186a4.2,4.2,0,0,0,4.181-3.794L21.846,7h.9a1.05,1.05,0,0,0,0-2.1ZM19.736,7,18.084,24a2.1,2.1,0,0,1-2.091,1.9H7.806A2.1,2.1,0,0,1,5.717,24L4.064,7ZM8.75,13.3a1.05,1.05,0,1,1,2.1,0v6.3a1.05,1.05,0,0,1-2.1,0ZM14,12.25a1.05,1.05,0,0,0-1.05,1.05v6.3a1.05,1.05,0,0,0,2.1,0V13.3A1.051,1.051,0,0,0,14,12.25"
-                                    transform="translate(0 0)"
-                                ></path>
-                            </g>
-                        </g>
-                    </svg>
-                </div> -->
-            </div>
+                        <div v-if="item.type != 'textbox'" class="image">
+                            <img :src="item.src" alt="layer" />
+                        </div>
+                        <div class="text" v-else>
+                            {{ item.text }}
+                        </div>
+
+                        <div
+                            v-if="selectIndex === index + 1"
+                            @click.stop="deletItem(item)"
+                            class="del"
+                        >
+                            <svg
+                                width="1.2em"
+                                height="1.2em"
+                                xmlns="http://www.w3.org/2000/svg"
+                                xmlns:xlink="http://www.w3.org/1999/xlink"
+                                viewBox="0 0 23.8 28"
+                                class="icon"
+                            >
+                                <g fill="currentColor">
+                                    <g class="b" transform="translate(0 0)">
+                                        <path
+                                            class="c"
+                                            d="M14.155,2.1a.7.7,0,0,1,.686.563L15.289,4.9H8.511l.447-2.237A.7.7,0,0,1,9.645,2.1ZM17.43,4.9,16.9,2.251A2.8,2.8,0,0,0,14.155,0H9.645A2.8,2.8,0,0,0,6.9,2.251L6.37,4.9H1.05a1.05,1.05,0,1,0,0,2.1h.9L3.626,24.206A4.2,4.2,0,0,0,7.806,28h8.186a4.2,4.2,0,0,0,4.181-3.794L21.846,7h.9a1.05,1.05,0,0,0,0-2.1ZM19.736,7,18.084,24a2.1,2.1,0,0,1-2.091,1.9H7.806A2.1,2.1,0,0,1,5.717,24L4.064,7ZM8.75,13.3a1.05,1.05,0,1,1,2.1,0v6.3a1.05,1.05,0,0,1-2.1,0ZM14,12.25a1.05,1.05,0,0,0-1.05,1.05v6.3a1.05,1.05,0,0,0,2.1,0V13.3A1.051,1.051,0,0,0,14,12.25"
+                                            transform="translate(0 0)"
+                                        ></path>
+                                    </g>
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+                </template>
+            </draggable>
         </div>
     </div>
 </template>
 <script setup>
+import draggable from 'vuedraggable'
 import { computed, shallowRef, ref, inject, watch, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import { addTab } from '@/constants/addtab'
@@ -346,70 +301,6 @@ watch(
     { immediate: true }
 )
 
-// 升序操作：图层在列表中向上移动（在画布中向后移动）
-const moveLayerUp = (targetObject) => {
-    if (handler.value && targetObject && canvas.value) {
-        const objects = canvas.value.getObjects()
-        const currentIndex = objects.indexOf(targetObject)
-
-        // 检查是否可以向上移动
-        const backgroundObjects = objects.filter((obj) => obj.type === 'background')
-        const maxIndex =
-            backgroundObjects.length > 0
-                ? objects.length - backgroundObjects.length - 1
-                : objects.length - 1
-
-        if (currentIndex < maxIndex && currentIndex >= 0) {
-            // 暂时关闭历史记录以避免重复保存
-            canvas.value.offHistory()
-
-            handler.value.bringForward(targetObject)
-            console.log('move up', canvas.value.getObjects())
-
-            // 重新开启历史记录并保存当前状态
-            canvas.value.onHistory()
-
-            // 更新图层列表
-            updateLayersList()
-            // 更新selectIndex以跟随移动的图层
-            updateSelectIndexAfterMove(targetObject)
-        }
-    }
-}
-
-// 降序操作：图层在列表中向下移动（在画布中向前移动）
-const moveLayerDown = (targetObject) => {
-    console.log('move Down', canvas.value.getObjects())
-    if (handler.value && targetObject && canvas.value) {
-        const objects = canvas.value.getObjects()
-        const currentIndex = objects.indexOf(targetObject)
-
-        // 找到第一个非工作区对象的索引
-        let minIndex = 0
-        for (let i = 0; i < objects.length; i++) {
-            if (objects[i].type !== 'workarea' && objects[i].type !== 'background') {
-                minIndex = i
-                break
-            }
-        }
-        console.log('minIndex', minIndex, currentIndex)
-        if (currentIndex > minIndex) {
-            // 暂时关闭历史记录以避免重复保存
-            canvas.value.offHistory()
-
-            handler.value.sendBackwards(targetObject)
-
-            // 重新开启历史记录并保存当前状态
-            canvas.value.onHistory()
-
-            // 更新图层列表
-            updateLayersList()
-            // 更新selectIndex以跟随移动的图层
-            updateSelectIndexAfterMove(targetObject)
-        }
-    }
-}
-
 // 在图层移动后更新selectIndex
 const updateSelectIndexAfterMove = (targetObject) => {
     // 等待下一个tick，确保图层列表已更新
@@ -425,22 +316,68 @@ const updateSelectIndexAfterMove = (targetObject) => {
     })
 }
 
-// 更新图层列表状态
-const updateLayersList = () => {
-    if (canvas.value) {
-        store.commit('setLayers', canvas.value.getObjects())
+const deletItem = (target) => {
+    if (selectIndex.value > 0 && canvas.value && target) {
+        // 暂时关闭历史记录
+        canvas.value.offHistory()
+
+        // 从画布中移除对象
+        canvas.value.remove(target)
+
+        // 更新store中的图层列表
+        const updatedLayers = canvas.value.getObjects()
+        store.commit('setLayers', updatedLayers)
+
+        // 清除当前选中状态
+        store.commit('setCurrentItem', null)
+        selectIndex.value = 0
+
+        // 重新开启历史记录
+        canvas.value.onHistory()
+        canvas.value.renderAll()
+
+        // 取消画布中的选中状态
+        canvas.value.discardActiveObject()
+        canvas.value.renderAll()
     }
 }
-// const deletItem = (target) => {
-//     if (selectIndex.value > 0) {
-//         canvas.value.remove(target)
-//         canvas.value.renderAll()
-//     }
-// }
 
 const icons = computed(() => {
     return state.icons
 })
+
+const layersList = computed({
+    get() {
+        return state.alllayers.slice(1)
+    },
+    set(value) {
+        // 更新图层顺序
+        const newLayers = [state.alllayers[0], ...value]
+        store.commit('setLayers', newLayers)
+    }
+})
+
+const onDragEnd = (evt) => {
+    if (canvas.value && handler.value) {
+        // 暂时关闭历史记录
+        canvas.value.offHistory()
+
+        // 重新排列canvas中的对象
+        const objects = canvas.value.getObjects()
+        const background = objects[0] // 保留背景
+        const newObjects = [background, ...layersList.value]
+
+        // 清空canvas并重新添加对象
+        canvas.value.clear()
+        newObjects.forEach((obj) => {
+            canvas.value.add(obj)
+        })
+
+        // 重新开启历史记录
+        canvas.value.onHistory()
+        canvas.value.renderAll()
+    }
+}
 
 const addData = shallowRef(addTab)
 const materialList = shallowRef(material.map((item, index) => ({ ...item, id: index })))
@@ -853,6 +790,7 @@ async function uploadImage(e, type = 'Image') {
     background: #6b72801a;
     -webkit-transition: all 0.2s ease;
     transition: all 0.2s ease;
+    margin-left: 0.5rem;
 }
 .layer {
     width: 100%;
@@ -877,6 +815,28 @@ async function uploadImage(e, type = 'Image') {
     align-items: center;
     padding: 0.75rem 1rem;
     border-radius: 0.75rem;
+    cursor: move;
+    transition: all 0.2s ease;
+    background-color: #f9fafb;
+}
+
+/* 拖拽相关样式 */
+.ghost {
+    opacity: 0.5;
+    background-color: #f0f0f0;
+    border: 2px dashed #ccc;
+}
+
+.chosen {
+    background-color: #e3f2fd;
+    border: 2px solid #2196f3;
+    transform: scale(1.02);
+}
+
+.drag {
+    opacity: 0.8;
+    transform: rotate(5deg);
+
     gap: 0.75rem;
     background: #fff;
     border: 1px solid #e5e7eb;
