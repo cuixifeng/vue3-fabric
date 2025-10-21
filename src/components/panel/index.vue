@@ -92,6 +92,62 @@
                             </div>
                         </div>
                     </div>
+                    <div class="panel-block__header">
+                        <div class="panel-block__header-title">位置信息</div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div class="panel-row__label">X</div>
+                                    <div class="panel-row__content">
+                                        <el-input
+                                            v-model="left"
+                                            style="width: 240px"
+                                            autosize
+                                            type="number"
+                                            placeholder="Please input"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div class="panel-row__label">Y</div>
+                                    <div class="panel-row__content">
+                                        <el-input
+                                            v-model="top"
+                                            style="width: 240px"
+                                            autosize
+                                            type="number"
+                                            placeholder="Please input"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div class="panel-row__label">旋转角度</div>
+                                    <div class="panel-row__content">
+                                        <el-input
+                                            v-model="angle"
+                                            style="width: 240px"
+                                            autosize
+                                            placeholder="Please input"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div v-if="currentItem && currentItem.type == 'Image'" class="panel-block">
                     <!-- 🎛️基础调整 -->
@@ -464,6 +520,9 @@ export default {
         const canvas = inject('canvas')
         const textarea1 = ref('在这里输入文字')
         const fontSize = ref(40)
+        const left = ref(0)
+        const top = ref(0)
+        const angle = ref(0)
         const openCut = ref(false)
         const fontWeight = ref('normal')
         const fontStyle = ref('normal')
@@ -537,6 +596,16 @@ export default {
             },
             Y: (activeObject, value) => {
                 activeObject.set('lockMovementY', value)
+            },
+            angle: (activeObject, value) => {
+                activeObject.rotate(parseInt(value) || 0)
+                // activeObject.set('angle', parseInt(value) || 0)
+            },
+            left: (activeObject, value) => {
+                activeObject.set('left', parseInt(value) || 0)
+            },
+            top: (activeObject, value) => {
+                activeObject.set('top', parseInt(value) || 0)
             }
         }
 
@@ -577,6 +646,9 @@ export default {
         const textWatchConfig = [
             { ref: X, property: 'X' },
             { ref: Y, property: 'Y' },
+            { ref: angle, property: 'angle' },
+            { ref: left, property: 'left' },
+            { ref: top, property: 'top' },
             { ref: textarea1, property: 'text' },
             { ref: fontSize, property: 'fontSize' },
             { ref: fontWeight, property: 'fontWeight' },
@@ -700,6 +772,10 @@ export default {
 
                     X.value = newItem.lockMovementX || false
                     Y.value = newItem.lockMovementY || false
+                    console.log(newItem, newItem.top)
+                    left.value = parseInt(newItem.left) || 0
+                    top.value = parseInt(newItem.top) || 0
+                    angle.value = parseInt(newItem.angle) || 0
                 }
                 if (
                     newItem &&
@@ -771,6 +847,9 @@ export default {
             pixelateValue,
             X,
             Y,
+            left,
+            top,
+            angle,
             fontStyle,
             fontWeight,
             charSpacing,

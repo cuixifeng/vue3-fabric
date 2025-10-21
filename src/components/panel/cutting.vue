@@ -285,9 +285,9 @@ function cropImage() {
                 width: cropWidth,
                 height: cropHeight,
                 scaleX: 1,
-                scaleY: 1,
-                left: (workspace.value.width - cropWidth) / 2,
-                top: (workspace.value.height - cropHeight) / 2
+                scaleY: 1
+                // left: (workspace.value.width - cropWidth) / 2,
+                // top: (workspace.value.height - cropHeight) / 2
             })
 
             // 重新渲染主画布
