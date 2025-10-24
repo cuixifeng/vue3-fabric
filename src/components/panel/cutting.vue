@@ -29,7 +29,7 @@
 import { useStore } from 'vuex'
 import { fabric } from 'fabric'
 import { ElDialog, ElButton } from 'element-plus'
-import { defineProps, withDefaults, ref, provide, nextTick, inject, computed } from 'vue'
+import { withDefaults, ref, provide, nextTick, inject, computed } from 'vue'
 const props = withDefaults(
     defineProps<{
         // 弹窗标题
@@ -285,13 +285,13 @@ function cropImage() {
                 width: cropWidth,
                 height: cropHeight,
                 scaleX: 1,
-                scaleY: 1,
-                left: (workspace.value.width - cropWidth) / 2,
-                top: (workspace.value.height - cropHeight) / 2
+                scaleY: 1
+                // left: (workspace.value.width - cropWidth) / 2,
+                // top: (workspace.value.height - cropHeight) / 2
             })
 
             // 重新渲染主画布
-            // canvas.value.renderAll()
+            canvas.value.renderAll()
 
             console.log('图片裁剪完成，已更新到主画布')
         })

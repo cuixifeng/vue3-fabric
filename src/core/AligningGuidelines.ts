@@ -3,7 +3,7 @@ function initAligningGuidelines(canvas,zoom) {
 		aligningLineOffset = 5,
 		aligningLineMargin = 4,
 		aligningLineWidth = 0.3,
-		aligningLineColor = '#cccccc',
+		aligningLineColor = 'red',
 		viewportTransform,
 		zoom = zoom;
 

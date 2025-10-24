@@ -18,7 +18,7 @@
     </el-tooltip>
 </template>
 <script setup>
-import { defineProps, computed, defineEmits } from 'vue'
+import { computed } from 'vue'
 const emit = defineEmits(['change'])
 const props = defineProps({
     className: {

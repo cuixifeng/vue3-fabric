@@ -92,6 +92,220 @@
                             </div>
                         </div>
                     </div>
+                    <div class="panel-block__header">
+                        <div class="panel-block__header-title">位置信息</div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div class="panel-row__label">X</div>
+                                    <div class="panel-row__content">
+                                        <el-input
+                                            v-model="left"
+                                            style="width: 240px"
+                                            autosize
+                                            type="number"
+                                            placeholder="Please input"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div class="panel-row__label">Y</div>
+                                    <div class="panel-row__content">
+                                        <el-input
+                                            v-model="top"
+                                            style="width: 240px"
+                                            autosize
+                                            type="number"
+                                            placeholder="Please input"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div class="panel-row__label">旋转角度</div>
+                                    <div class="panel-row__content">
+                                        <el-input
+                                            v-model="angle"
+                                            style="width: 240px"
+                                            autosize
+                                            placeholder="Please input"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="currentItem && currentItem.type == 'Image'" class="panel-block">
+                    <!-- 🎛️基础调整 -->
+                    <div class="panel-block__header">
+                        <div class="panel-block__header-title">🎛️基础调整</div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div class="panel-row__label">亮度</div>
+                                    <div class="panel-row__content">
+                                        <el-slider
+                                            :min="-1"
+                                            :max="1"
+                                            :step="0.01"
+                                            v-model="brightnessValue"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div class="panel-row__label">对比度</div>
+                                    <div class="panel-row__content">
+                                        <el-slider
+                                            :min="-1"
+                                            :max="1"
+                                            :step="0.01"
+                                            v-model="contrastValue"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div class="panel-row__label">饱和度</div>
+                                    <div class="panel-row__content">
+                                        <el-slider
+                                            :min="-1"
+                                            :max="1"
+                                            :step="0.01"
+                                            v-model="saturationValue"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 色彩效果 -->
+                    <div class="panel-block__header">
+                        <div class="panel-block__header-title">🌈 色彩效果</div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div class="panel-row__label">色相旋转</div>
+                                    <div class="panel-row__content">
+                                        <el-slider
+                                            :min="0"
+                                            :max="360"
+                                            :step="1"
+                                            v-model="hueRotationValue"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 特效滤镜 -->
+                    <div class="panel-block__header">
+                        <div class="panel-block__header-title">✨ 特效滤镜</div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div class="panel-row__label">模糊度</div>
+                                    <div class="panel-row__content">
+                                        <el-slider
+                                            :min="0"
+                                            :max="1"
+                                            :step="0.01"
+                                            v-model="blurValue"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div class="panel-row__label">噪点强度</div>
+                                    <div class="panel-row__content">
+                                        <el-slider
+                                            :min="0"
+                                            :max="1000"
+                                            :step="10"
+                                            v-model="noiseValue"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div class="panel-row__label">像素化</div>
+                                    <div class="panel-row__content">
+                                        <el-slider
+                                            :min="1"
+                                            :max="20"
+                                            :step="1"
+                                            v-model="pixelateValue"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-block__content">
+                        <div class="gda-space-item">
+                            <div class="panel-row">
+                                <div class="gda-space-item">
+                                    <div class="panel-row__content">
+                                        <button
+                                            class="right-canvas-resize-btn"
+                                            @click="resetAllFilters"
+                                        >
+                                            重置滤镜
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        v-if="currentItem && currentItem.type == 'Image'"
+                        class="cutImg"
+                        @click="open"
+                    >
+                        图片裁剪
+                    </button>
                 </div>
                 <div v-if="currentItem && currentItem.type == 'textbox'" class="panel-block">
                     <div class="panel-block__header">
@@ -254,13 +468,6 @@
                         </div>
                     </div>
                 </div>
-                <button
-                    v-if="currentItem && currentItem.type == 'Image'"
-                    class="cutImg"
-                    @click="open"
-                >
-                    图片裁剪
-                </button>
             </div>
         </div>
         <Cutting
@@ -277,7 +484,7 @@
     </div>
 </template>
 <script lang="ts">
-import { ElInput, ElSelect, ElOption, ElSwitch } from 'element-plus'
+import { ElInput, ElSelect, ElOption, ElSwitch, ElSlider } from 'element-plus'
 import { panel } from '@/constants/panel'
 import { ref, computed, inject, shallowRef, watch } from 'vue'
 import { useStore } from 'vuex'
@@ -285,6 +492,7 @@ import Cutting from './cutting.vue'
 import WorkspaceSize from './workspace-size.vue'
 // const Color = () => import("./color.vue");
 import Color from './color.vue'
+import { template } from 'lodash-es'
 export default {
     components: {
         WorkspaceSize,
@@ -293,7 +501,8 @@ export default {
         ElInput,
         ElSelect,
         ElOption,
-        ElSwitch
+        ElSwitch,
+        ElSlider
     },
     props: {
         onChange: {
@@ -311,12 +520,24 @@ export default {
         const canvas = inject('canvas')
         const textarea1 = ref('在这里输入文字')
         const fontSize = ref(40)
+        const left = ref(0)
+        const top = ref(0)
+        const angle = ref(0)
         const openCut = ref(false)
         const fontWeight = ref('normal')
         const fontStyle = ref('normal')
         const charSpacing = ref(0)
         const X = ref(false)
         const Y = ref(false)
+        const brightnessValue = ref(0)
+
+        // 滤镜参数
+        const contrastValue = ref(0) // 对比度 (-1 到 1)
+        const saturationValue = ref(0) // 饱和度 (-1 到 1)
+        const hueRotationValue = ref(0) // 色相旋转 (0 到 360)
+        const blurValue = ref(0) // 模糊度 (0 到 1)
+        const noiseValue = ref(0) // 噪点强度 (0 到 1000)
+        const pixelateValue = ref(1) // 像素化 (1 到 20)
 
         // 阴影相关数据
         const shadowBlur = ref(10)
@@ -330,7 +551,6 @@ export default {
             return state.workspace
         })
         const currentItem = computed(() => {
-            console.log(state.currentItem, 'currentItem')
             return state.currentItem
         })
         const selectedItem = computed(() => {
@@ -376,6 +596,16 @@ export default {
             },
             Y: (activeObject, value) => {
                 activeObject.set('lockMovementY', value)
+            },
+            angle: (activeObject, value) => {
+                activeObject.rotate(parseInt(value) || 0)
+                // activeObject.set('angle', parseInt(value) || 0)
+            },
+            left: (activeObject, value) => {
+                activeObject.set('left', parseInt(value) || 0)
+            },
+            top: (activeObject, value) => {
+                activeObject.set('top', parseInt(value) || 0)
             }
         }
 
@@ -416,6 +646,9 @@ export default {
         const textWatchConfig = [
             { ref: X, property: 'X' },
             { ref: Y, property: 'Y' },
+            { ref: angle, property: 'angle' },
+            { ref: left, property: 'left' },
+            { ref: top, property: 'top' },
             { ref: textarea1, property: 'text' },
             { ref: fontSize, property: 'fontSize' },
             { ref: fontWeight, property: 'fontWeight' },
@@ -438,13 +671,111 @@ export default {
             watch(shadowRef, updateShadow)
         })
 
+        const resetAllFilters = () => {
+            if (currentItem.value && currentItem.value.type === 'Image') {
+                const filters = currentItem.value.filters
+                filters.length = 0 // 清空所有滤镜
+                brightnessValue.value = 0 // 亮度 (-1 到 1)
+                contrastValue.value = 0 // 对比度 (-1 到 1)
+                saturationValue.value = 0 // 饱和度 (-1 到 1)
+                hueRotationValue.value = 0 // 色相旋转 (0 到 360)
+                blurValue.value = 0 // 模糊度 (0 到 1)
+                noiseValue.value = 0 // 噪点强度 (0 到 1000)
+                pixelateValue.value = 1 // 像素化 (1 到 20)
+                currentItem.value.applyFilters()
+                canvas.value.renderAll()
+            }
+        }
+
+        // 通用滤镜应用函数
+        const applyFilter = (filterType, propertyName, value) => {
+            if (currentItem.value && currentItem.value.type === 'Image') {
+                const filters = currentItem.value.filters || []
+                const existingFilter = filters.find((f) => f.type === filterType)
+
+                if (existingFilter) {
+                    existingFilter[propertyName] = value
+                } else {
+                    const FilterClass = fabric.Image.filters[filterType]
+                    if (FilterClass) {
+                        const filterConfig = {}
+                        filterConfig[propertyName] = value
+                        filters.push(new FilterClass(filterConfig))
+                    }
+                }
+
+                currentItem.value.filters = filters
+                currentItem.value.applyFilters()
+                canvas.value.renderAll()
+            }
+        }
+
+        // 滤镜配置映射
+        const filterConfigs = [
+            { ref: brightnessValue, type: 'Brightness', property: 'brightness' },
+            { ref: contrastValue, type: 'Contrast', property: 'contrast' },
+            { ref: saturationValue, type: 'Saturation', property: 'saturation' },
+            { ref: hueRotationValue, type: 'HueRotation', property: 'rotation' },
+            { ref: blurValue, type: 'Blur', property: 'blur' },
+            { ref: noiseValue, type: 'Noise', property: 'noise' },
+            { ref: pixelateValue, type: 'Pixelate', property: 'blocksize' }
+        ]
+
+        // 批量创建滤镜监听器
+        filterConfigs.forEach(({ ref, type, property }) => {
+            watch(ref, (newValue) => {
+                applyFilter(type, property, newValue)
+            })
+        })
         // 监听当前选中项变化，更新面板数据
         watch(
             currentItem,
             (newItem) => {
                 if (newItem) {
+                    // 重置所有滤镜值为默认值
+                    brightnessValue.value = 0
+                    contrastValue.value = 0
+                    saturationValue.value = 0
+                    hueRotationValue.value = 0
+                    blurValue.value = 0
+                    noiseValue.value = 0
+                    pixelateValue.value = 1
+
+                    // 如果当前图层有滤镜，回显对应的值
+                    if (newItem.filters && newItem.filters.length > 0) {
+                        newItem.filters.forEach((filter) => {
+                            switch (filter.type) {
+                                case 'Brightness':
+                                    brightnessValue.value = filter.brightness || 0
+                                    break
+                                case 'Contrast':
+                                    contrastValue.value = filter.contrast || 0
+                                    break
+                                case 'Saturation':
+                                    saturationValue.value = filter.saturation || 0
+                                    break
+                                case 'HueRotation':
+                                    hueRotationValue.value = filter.rotation || 0
+                                    break
+                                case 'Blur':
+                                    blurValue.value = filter.blur || 0
+                                    break
+                                case 'Noise':
+                                    noiseValue.value = filter.noise || 0
+                                    break
+                                case 'Pixelate':
+                                    pixelateValue.value = filter.blocksize || 1
+                                    break
+                            }
+                        })
+                    }
+
                     X.value = newItem.lockMovementX || false
                     Y.value = newItem.lockMovementY || false
+                    console.log(newItem, newItem.top)
+                    left.value = parseInt(newItem.left) || 0
+                    top.value = parseInt(newItem.top) || 0
+                    angle.value = parseInt(newItem.angle) || 0
                 }
                 if (
                     newItem &&
@@ -506,8 +837,19 @@ export default {
             popupRef.value?.open()
         }
         return {
+            resetAllFilters,
+            brightnessValue,
+            contrastValue,
+            saturationValue,
+            hueRotationValue,
+            blurValue,
+            noiseValue,
+            pixelateValue,
             X,
             Y,
+            left,
+            top,
+            angle,
             fontStyle,
             fontWeight,
             charSpacing,
@@ -890,7 +1232,7 @@ export default {
 }
 .cutImg {
     width: 100%;
-    position: absolute;
-    bottom: 10px;
+    // position: absolute;
+    // bottom: 10px;
 }
 </style>

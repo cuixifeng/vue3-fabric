@@ -64,7 +64,7 @@
     </div>
 </template>
 <script setup>
-import { ref, inject, onMounted, onUnmounted, defineProps, nextTick } from 'vue'
+import { ref, inject, onMounted, onUnmounted, nextTick } from 'vue'
 const menuShow = ref(false)
 const scaleDom = ref()
 const canvas = inject('canvas')

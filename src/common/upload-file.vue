@@ -128,7 +128,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { defineEmits, ref, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { ElIcon } from 'element-plus'
 import { Close } from '@element-plus/icons-vue'
 import { tryOnMounted, useEventListener } from '@vueuse/core'

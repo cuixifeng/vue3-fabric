@@ -13,7 +13,7 @@
     </teleport>
 </template>
 <script setup>
-import { defineProps, watch, ref, onUnmounted, onMounted, nextTick, defineEmits } from 'vue'
+import { watch, ref, onUnmounted, onMounted, nextTick } from 'vue'
 import { throttle } from 'lodash-es'
 /**
  * 要求引用该组件的组件 类名中要加popover
